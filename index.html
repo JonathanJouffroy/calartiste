@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galerie · Œuvres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAF9F6;
+    --black: #1A1A1A;
+    --gold: #C9A96E;
+    --stone: #8A8A8A;
+    --light: #F0EEE9;
+    --white: #FFFFFF;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(250,249,246,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 22px; font-weight: 400; letter-spacing: 0.04em;
+    color: var(--black); text-decoration: none;
+    cursor: pointer;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-size: 12px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--stone);
+    text-decoration: none; transition: color 0.2s;
+    cursor: pointer;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--black); }
+
+  /* ─── PAGES ─── */
+  .page { display: none; padding-top: 80px; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ─── HOME PAGE ─── */
+  .hero {
+    display: grid; grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 80px);
+  }
+  .hero-text {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 64px 80px 48px;
+  }
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 24px;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garant', serif;
+    font-size: clamp(52px, 6vw, 80px);
+    font-weight: 300; line-height: 1.08;
+    margin-bottom: 28px; color: var(--black);
+  }
+  .hero-title em { font-style: italic; color: var(--gold); }
+  .hero-desc {
+    font-size: 15px; color: var(--stone); line-height: 1.8;
+    max-width: 380px; margin-bottom: 48px;
+  }
+  .btn-primary {
+    display: inline-block; padding: 14px 36px;
+    background: var(--black); color: var(--white);
+    font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; text-decoration: none;
+    cursor: pointer; border: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--gold); transform: translateY(-1px); }
+
+  .hero-image {
+    position: relative; overflow: hidden;
+    background: var(--light);
+  }
+  .hero-image-inner {
+    width: 100%; height: 100%; object-fit: cover;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-placeholder {
+    width: 100%; height: 100%; min-height: 600px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 12px;
+    background: linear-gradient(135deg, #E8E4DC 0%, #D4CEC4 100%);
+  }
+  .hero-placeholder-icon { font-size: 48px; opacity: 0.3; }
+  .hero-placeholder-text { font-size: 12px; color: var(--stone); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* Featured works on home */
+  .home-featured { padding: 80px 48px; }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 48px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 36px; font-weight: 300;
+  }
+  .section-link {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--stone); cursor: pointer;
+    text-decoration: none; transition: color 0.2s;
+  }
+  .section-link:hover { color: var(--gold); }
+
+  .about-strip {
+    background: var(--black); color: var(--white);
+    padding: 80px 48px;
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px;
+    align-items: center;
+  }
+  .about-strip-title {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 44px; font-weight: 300; line-height: 1.1;
+  }
+  .about-strip-title em { font-style: italic; color: var(--gold); }
+  .about-strip-text { font-size: 15px; line-height: 1.8; color: rgba(255,255,255,0.65); }
+
+  /* ─── GALLERY PAGE (PLP) ─── */
+  .gallery-header {
+    padding: 60px 48px 40px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  .gallery-header-title {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 56px; font-weight: 300;
+  }
+  .gallery-header-sub { color: var(--stone); font-size: 13px; margin-top: 8px; }
+
+  .gallery-filters {
+    padding: 20px 48px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .filter-btn {
+    padding: 6px 18px;
+    border: 1px solid rgba(0,0,0,0.15);
+    background: transparent; font-size: 11px;
+    font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer;
+    transition: all 0.2s; color: var(--stone);
+    font-family: 'Inter', sans-serif;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--black); color: var(--white); border-color: var(--black);
+  }
+
+  .gallery-grid {
+    padding: 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 32px;
+  }
+  .artwork-card {
+    cursor: pointer; position: relative;
+    background: var(--white);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .artwork-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+
+  .artwork-card-img {
+    width: 100%; aspect-ratio: 3/4; object-fit: cover;
+    display: block; background: var(--light);
+    position: relative; overflow: hidden;
+  }
+  .artwork-card-img-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; opacity: 0.2;
+    background: linear-gradient(160deg, #E5E1D8, #CCC8BE);
+  }
+  .artwork-card-overlay {
+    position: absolute; inset: 0;
+    background: rgba(26,26,26,0); color: white;
+    display: flex; align-items: flex-end;
+    padding: 24px; transition: background 0.3s;
+    opacity: 0;
+  }
+  .artwork-card:hover .artwork-card-overlay {
+    background: rgba(26,26,26,0.5); opacity: 1;
+  }
+  .artwork-card-overlay-text {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .artwork-card-info { padding: 16px 0 4px; }
+  .artwork-card-title {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 20px; font-weight: 400;
+  }
+  .artwork-card-meta { font-size: 12px; color: var(--stone); margin-top: 4px; }
+  .artwork-card-price {
+    font-size: 13px; color: var(--gold); margin-top: 6px; font-weight: 500;
+  }
+
+  /* ─── ARTWORK DETAIL PAGE (PDP) ─── */
+  .pdp-back {
+    padding: 28px 48px 0;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--stone);
+    cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    transition: color 0.2s;
+  }
+  .pdp-back:hover { color: var(--black); }
+
+  .pdp-layout {
+    display: grid; grid-template-columns: 1.1fr 1fr;
+    gap: 80px; padding: 48px 48px 80px;
+    align-items: start;
+  }
+  .pdp-image-wrap { position: sticky; top: 100px; }
+  .pdp-image {
+    width: 100%; aspect-ratio: 3/4; object-fit: cover;
+    display: block; background: var(--light);
+  }
+  .pdp-image-placeholder {
+    width: 100%; aspect-ratio: 3/4;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px; opacity: 0.15;
+    background: linear-gradient(160deg, #E5E1D8, #CCC8BE);
+  }
+  .pdp-info { padding-top: 16px; }
+  .pdp-category {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
+  }
+  .pdp-title {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 52px; font-weight: 300; line-height: 1.05;
+    margin-bottom: 8px;
+  }
+  .pdp-year { font-size: 14px; color: var(--stone); margin-bottom: 32px; }
+  .pdp-divider { border: none; border-top: 1px solid rgba(0,0,0,0.1); margin: 32px 0; }
+  .pdp-desc { font-size: 15px; line-height: 1.85; color: #444; }
+  .pdp-specs { margin-top: 40px; display: grid; gap: 16px; }
+  .pdp-spec { display: flex; justify-content: space-between; align-items: baseline; }
+  .pdp-spec-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--stone); }
+  .pdp-spec-value { font-size: 14px; font-weight: 500; }
+  .pdp-price {
+    margin-top: 40px;
+    font-family: 'Cormorant Garant', serif;
+    font-size: 36px; color: var(--gold);
+  }
+  .pdp-cta {
+    margin-top: 24px;
+    display: inline-block; width: 100%; text-align: center;
+    padding: 16px; background: var(--black); color: var(--white);
+    font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; cursor: pointer; border: none;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+  }
+  .pdp-cta:hover { background: var(--gold); }
+
+  /* ─── BACK OFFICE ─── */
+  .admin-wrap {
+    max-width: 900px; margin: 0 auto;
+    padding: 40px 48px 80px;
+  }
+  .admin-title {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 42px; font-weight: 300; margin-bottom: 8px;
+  }
+  .admin-sub { color: var(--stone); font-size: 13px; margin-bottom: 48px; }
+
+  .admin-tabs { display: flex; gap: 0; border-bottom: 1px solid rgba(0,0,0,0.1); margin-bottom: 40px; }
+  .admin-tab {
+    padding: 12px 28px; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; color: var(--stone); border: none;
+    background: transparent; border-bottom: 2px solid transparent;
+    font-family: 'Inter', sans-serif; transition: all 0.2s;
+  }
+  .admin-tab:hover { color: var(--black); }
+  .admin-tab.active { color: var(--black); border-bottom-color: var(--gold); }
+
+  .admin-panel { display: none; }
+  .admin-panel.active { display: block; }
+
+  .admin-form { display: grid; gap: 24px; }
+  .form-group { display: grid; gap: 8px; }
+  .form-group label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--stone);
+  }
+  .form-group input, .form-group textarea, .form-group select {
+    border: 1px solid rgba(0,0,0,0.15);
+    padding: 12px 14px; font-size: 14px; font-family: 'Inter', sans-serif;
+    background: var(--white); color: var(--black);
+    outline: none; transition: border-color 0.2s;
+    appearance: none;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    border-color: var(--gold);
+  }
+  .form-group textarea { resize: vertical; min-height: 120px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  .file-upload-area {
+    border: 2px dashed rgba(0,0,0,0.15);
+    padding: 40px; text-align: center; cursor: pointer;
+    transition: border-color 0.2s; position: relative;
+  }
+  .file-upload-area:hover { border-color: var(--gold); }
+  .file-upload-area input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    border: none; padding: 0;
+  }
+  .file-upload-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.4; }
+  .file-upload-text { font-size: 13px; color: var(--stone); }
+  .file-upload-preview {
+    width: 100%; max-height: 200px; object-fit: contain;
+    display: none; margin-top: 12px;
+  }
+
+  .btn-submit {
+    padding: 14px 40px; background: var(--black);
+    color: var(--white); border: none; cursor: pointer;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+  }
+  .btn-submit:hover { background: var(--gold); }
+
+  .admin-list { display: grid; gap: 12px; }
+  .admin-list-item {
+    display: flex; align-items: center; gap: 20px;
+    padding: 16px 20px; background: var(--white);
+    border: 1px solid rgba(0,0,0,0.08);
+    transition: border-color 0.2s;
+  }
+  .admin-list-item:hover { border-color: var(--gold); }
+  .admin-list-thumb {
+    width: 56px; height: 56px; object-fit: cover;
+    background: var(--light); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; overflow: hidden;
+  }
+  .admin-list-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .admin-list-info { flex: 1; }
+  .admin-list-name {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 18px; font-weight: 400;
+  }
+  .admin-list-meta { font-size: 12px; color: var(--stone); margin-top: 2px; }
+  .admin-list-actions { display: flex; gap: 8px; }
+  .btn-icon {
+    padding: 8px 14px; border: 1px solid rgba(0,0,0,0.15);
+    background: transparent; cursor: pointer; font-size: 12px;
+    font-family: 'Inter', sans-serif; color: var(--stone);
+    transition: all 0.2s;
+  }
+  .btn-icon:hover { background: #fee; border-color: #f88; color: #c00; }
+  .btn-icon.edit:hover { background: var(--black); color: white; border-color: var(--black); }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--black); color: var(--white);
+    padding: 14px 28px; font-size: 13px;
+    z-index: 999; transition: transform 0.3s; opacity: 0;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  .empty-state {
+    text-align: center; padding: 80px 20px;
+    color: var(--stone);
+  }
+  .empty-state-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+  .empty-state-text { font-size: 14px; }
+
+  footer {
+    background: var(--black); color: rgba(255,255,255,0.4);
+    padding: 40px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 18px; font-weight: 400; color: rgba(255,255,255,0.7);
+  }
+
+  /* ─── LOGIN PAGE ─── */
+  .login-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(26,26,26,0.7); backdrop-filter: blur(6px);
+    align-items: center; justify-content: center;
+  }
+  .login-overlay.active { display: flex; }
+  .login-box {
+    background: var(--cream); padding: 56px 48px;
+    width: 100%; max-width: 420px; position: relative;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+    animation: loginIn 0.3s ease;
+  }
+  @keyframes loginIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .login-close {
+    position: absolute; top: 20px; right: 20px;
+    background: none; border: none; font-size: 20px;
+    cursor: pointer; color: var(--stone); line-height: 1;
+  }
+  .login-close:hover { color: var(--black); }
+  .login-title {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 32px; font-weight: 300; margin-bottom: 6px;
+  }
+  .login-sub { font-size: 12px; color: var(--stone); margin-bottom: 36px; letter-spacing: 0.05em; }
+  .login-form { display: grid; gap: 20px; }
+  .login-error {
+    font-size: 12px; color: #c00; padding: 10px 14px;
+    background: #fff0f0; border: 1px solid #fcc;
+    display: none;
+  }
+  .login-error.show { display: block; }
+  .login-attempts {
+    font-size: 11px; color: var(--stone); text-align: center; margin-top: -8px;
+  }
+  .login-lock {
+    text-align: center; padding: 20px 0;
+    font-size: 13px; color: #c00;
+  }
+  .login-lock-icon { font-size: 32px; margin-bottom: 12px; }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-image { min-height: 300px; }
+    .hero-text { padding: 40px 20px; }
+    .home-featured, .gallery-header, .gallery-filters, .gallery-grid { padding-left: 20px; padding-right: 20px; }
+    .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+    .pdp-layout { grid-template-columns: 1fr; padding: 20px; gap: 32px; }
+    .pdp-image-wrap { position: static; }
+    .about-strip { grid-template-columns: 1fr; gap: 32px; padding: 48px 20px; }
+    .admin-wrap { padding: 20px; }
+    .form-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <span class="nav-logo" onclick="showPage('home')">Atelier</span>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" id="nav-home" class="active">Accueil</a></li>
+    <li><a onclick="showPage('gallery')" id="nav-gallery">Galerie</a></li>
+    <li><a onclick="requireAdmin()" id="nav-admin" style="display:none">Admin</a></li>
+    <li><a onclick="logout()" id="nav-logout" style="display:none;color:#c00">Déconnexion</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════ HOME PAGE ═══════════════ -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-text">
+      <p class="hero-eyebrow">Peintures originales</p>
+      <h1 class="hero-title">L'art comme<br><em>langage vivant</em></h1>
+      <p class="hero-desc">
+        Chaque toile est une invitation à ressentir, à s'arrêter, à voyager dans un univers de couleurs et d'émotions sincères.
+      </p>
+      <button class="btn-primary" onclick="showPage('gallery')">Voir les œuvres</button>
+    </div>
+    <div class="hero-image">
+      <div class="hero-placeholder" id="hero-artwork">
+        <div class="hero-placeholder-icon">🎨</div>
+        <div class="hero-placeholder-text">Œuvre à la une</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="home-featured">
+    <div class="section-header">
+      <h2 class="section-title">Œuvres récentes</h2>
+      <span class="section-link" onclick="showPage('gallery')">Voir toute la galerie →</span>
+    </div>
+    <div class="gallery-grid" id="home-grid" style="padding:0">
+      <!-- filled by JS -->
+    </div>
+  </section>
+
+  <div class="about-strip">
+    <h2 class="about-strip-title">Une artiste<br>au fil<br><em>des saisons</em></h2>
+    <p class="about-strip-text">
+      Autodidacte passionnée, elle explore depuis plus de dix ans les possibilités infinies de la peinture acrylique et à l'huile. Son travail puise dans les paysages, les émotions du quotidien et la beauté des choses simples. Chaque œuvre est unique, réalisée avec soin, dans un atelier baigné de lumière naturelle.
+    </p>
+  </div>
+
+  <footer>
+    <span class="footer-logo">Atelier</span>
+    <span>© 2025 · Tous droits réservés</span>
+  </footer>
+</div>
+
+<!-- ═══════════════ GALLERY PAGE (PLP) ═══════════════ -->
+<div id="page-gallery" class="page">
+  <div class="gallery-header">
+    <h1 class="gallery-header-title">La Galerie</h1>
+    <p class="gallery-header-sub" id="gallery-count">Chargement…</p>
+  </div>
+  <div class="gallery-filters" id="gallery-filters">
+    <button class="filter-btn active" onclick="filterGallery('all', this)">Tout</button>
+  </div>
+  <div class="gallery-grid" id="gallery-grid"></div>
+  <footer>
+    <span class="footer-logo">Atelier</span>
+    <span>© 2025 · Tous droits réservés</span>
+  </footer>
+</div>
+
+<!-- ═══════════════ ARTWORK DETAIL (PDP) ═══════════════ -->
+<div id="page-pdp" class="page">
+  <div class="pdp-back" onclick="showPage('gallery')">← Retour à la galerie</div>
+  <div class="pdp-layout">
+    <div class="pdp-image-wrap">
+      <div id="pdp-image-container"></div>
+    </div>
+    <div class="pdp-info">
+      <p class="pdp-category" id="pdp-category"></p>
+      <h1 class="pdp-title" id="pdp-title"></h1>
+      <p class="pdp-year" id="pdp-year"></p>
+      <hr class="pdp-divider">
+      <p class="pdp-desc" id="pdp-desc"></p>
+      <div class="pdp-specs">
+        <div class="pdp-spec">
+          <span class="pdp-spec-label">Technique</span>
+          <span class="pdp-spec-value" id="pdp-technique"></span>
+        </div>
+        <div class="pdp-spec">
+          <span class="pdp-spec-label">Dimensions</span>
+          <span class="pdp-spec-value" id="pdp-dimensions"></span>
+        </div>
+        <div class="pdp-spec">
+          <span class="pdp-spec-label">Disponibilité</span>
+          <span class="pdp-spec-value" id="pdp-availability"></span>
+        </div>
+      </div>
+      <p class="pdp-price" id="pdp-price"></p>
+      <button class="pdp-cta" id="pdp-cta">Contacter l'artiste</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ BACK OFFICE ═══════════════ -->
+<div id="page-admin" class="page">
+  <div class="admin-wrap">
+    <h1 class="admin-title">Back Office</h1>
+    <p class="admin-sub">Gérez les œuvres de la galerie</p>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('add', this)">+ Ajouter une œuvre</button>
+      <button class="admin-tab" onclick="switchAdminTab('list', this)">Liste des œuvres</button>
+    </div>
+
+    <!-- ADD FORM -->
+    <div id="admin-add" class="admin-panel active">
+      <form class="admin-form" onsubmit="saveArtwork(event)">
+        <div class="form-group">
+          <label>Titre de l'œuvre *</label>
+          <input type="text" id="f-title" required placeholder="Ex : Lumière d'automne">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Année *</label>
+            <input type="number" id="f-year" required placeholder="2024" min="1900" max="2100">
+          </div>
+          <div class="form-group">
+            <label>Catégorie</label>
+            <input type="text" id="f-category" placeholder="Paysage, Portrait, Abstrait…">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="f-desc" placeholder="Décrivez l'œuvre, son inspiration, ses émotions…"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Technique</label>
+            <input type="text" id="f-technique" placeholder="Huile sur toile">
+          </div>
+          <div class="form-group">
+            <label>Dimensions</label>
+            <input type="text" id="f-dimensions" placeholder="60 × 80 cm">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prix (€)</label>
+            <input type="number" id="f-price" placeholder="450" min="0">
+          </div>
+          <div class="form-group">
+            <label>Disponibilité</label>
+            <select id="f-availability">
+              <option value="Disponible">Disponible</option>
+              <option value="Vendu">Vendu</option>
+              <option value="Sur commande">Sur commande</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Image de l'œuvre</label>
+          <div class="file-upload-area" id="upload-area">
+            <input type="file" id="f-image" accept="image/*" onchange="previewImage(event)">
+            <div class="file-upload-icon">🖼️</div>
+            <div class="file-upload-text">Cliquez ou glissez une image ici<br><small>JPG, PNG, WEBP · max 5 Mo</small></div>
+            <img class="file-upload-preview" id="img-preview" src="" alt="Aperçu">
+          </div>
+        </div>
+        <input type="hidden" id="f-edit-id" value="">
+        <div style="display:flex;gap:12px;align-items:center">
+          <button type="submit" class="btn-submit" id="form-submit-btn">Ajouter l'œuvre</button>
+          <button type="button" class="btn-submit" style="background:var(--stone)" id="cancel-edit-btn" onclick="cancelEdit()" style="display:none">Annuler</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- LIST -->
+    <div id="admin-list" class="admin-panel">
+      <div id="admin-artworks-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ LOGIN MODAL ═══════════════ -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <button class="login-close" onclick="closeLogin()">✕</button>
+    <h2 class="login-title">Espace Admin</h2>
+    <p class="login-sub">Accès réservé à l'administrateur</p>
+    <div id="login-lock-msg" class="login-lock" style="display:none">
+      <div class="login-lock-icon">🔒</div>
+      Accès temporairement bloqué.<br>
+      <span id="lock-countdown"></span>
+    </div>
+    <div id="login-form-wrap">
+      <div class="login-error" id="login-error">Identifiant ou mot de passe incorrect.</div>
+      <form class="login-form" onsubmit="doLogin(event)">
+        <div class="form-group">
+          <label>Identifiant</label>
+          <input type="text" id="login-user" autocomplete="username" placeholder="admin" required>
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="login-pass" autocomplete="current-password" placeholder="••••••••" required>
+        </div>
+        <p class="login-attempts" id="login-attempts-msg"></p>
+        <button type="submit" class="btn-submit" style="width:100%">Se connecter</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── AUTH ───
+// Pour changer les identifiants, modifiez ces deux valeurs :
+const ADMIN_USER = 'admin';
+const ADMIN_PASS_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // "admin" — changez en prod !
+
+const MAX_ATTEMPTS = 5;
+const LOCK_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+const SESSION_KEY = 'galerie_session';
+const LOCK_KEY = 'galerie_lock';
+let lockTimer = null;
+
+async function hashPassword(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function isLoggedIn() {
+  try {
+    const s = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
+    return s && s.auth === true && s.ts && (Date.now() - s.ts < 2 * 60 * 60 * 1000); // 2h session
+  } catch { return false; }
+}
+
+function setSession() {
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ auth: true, ts: Date.now() }));
+}
+
+function clearSession() {
+  sessionStorage.removeItem(SESSION_KEY);
+}
+
+function getLockData() {
+  try { return JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); } catch { return null; }
+}
+function setLockData(data) {
+  localStorage.setItem(LOCK_KEY, JSON.stringify(data));
+}
+
+function isLocked() {
+  const lock = getLockData();
+  if (!lock) return false;
+  if (lock.lockedUntil && Date.now() < lock.lockedUntil) return true;
+  if (lock.lockedUntil && Date.now() >= lock.lockedUntil) {
+    setLockData({ attempts: 0, lockedUntil: null });
+    return false;
+  }
+  return false;
+}
+
+function requireAdmin() {
+  if (isLoggedIn()) { showPage('admin'); return; }
+  openLogin();
+}
+
+function openLogin() {
+  document.getElementById('login-overlay').classList.add('active');
+  document.getElementById('login-error').classList.remove('show');
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  checkLockState();
+  setTimeout(() => document.getElementById('login-user').focus(), 100);
+}
+
+function closeLogin() {
+  document.getElementById('login-overlay').classList.remove('active');
+  if (lockTimer) clearInterval(lockTimer);
+}
+
+function checkLockState() {
+  const lock = getLockData();
+  const formWrap = document.getElementById('login-form-wrap');
+  const lockMsg = document.getElementById('login-lock-msg');
+  const attemptsMsg = document.getElementById('login-attempts-msg');
+
+  if (isLocked()) {
+    formWrap.style.display = 'none';
+    lockMsg.style.display = 'block';
+    startLockCountdown(lock.lockedUntil);
+  } else {
+    formWrap.style.display = 'block';
+    lockMsg.style.display = 'none';
+    const remaining = MAX_ATTEMPTS - ((lock && lock.attempts) || 0);
+    if (remaining < MAX_ATTEMPTS) {
+      attemptsMsg.textContent = `${remaining} tentative${remaining > 1 ? 's' : ''} restante${remaining > 1 ? 's' : ''}`;
+    } else {
+      attemptsMsg.textContent = '';
+    }
+  }
+}
+
+function startLockCountdown(until) {
+  if (lockTimer) clearInterval(lockTimer);
+  const el = document.getElementById('lock-countdown');
+  lockTimer = setInterval(() => {
+    const remaining = Math.max(0, Math.ceil((until - Date.now()) / 1000));
+    const m = Math.floor(remaining / 60), s = remaining % 60;
+    el.textContent = `Réessayez dans ${m}:${String(s).padStart(2,'0')}`;
+    if (remaining <= 0) {
+      clearInterval(lockTimer);
+      checkLockState();
+    }
+  }, 1000);
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  if (isLocked()) { checkLockState(); return; }
+
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const hashed = await hashPassword(pass);
+
+  const lock = getLockData() || { attempts: 0, lockedUntil: null };
+
+  if (user === ADMIN_USER && hashed === ADMIN_PASS_HASH) {
+    setLockData({ attempts: 0, lockedUntil: null });
+    setSession();
+    closeLogin();
+    updateNavForAuth();
+    showPage('admin');
+    showToast('Bienvenue dans l\'espace admin !');
+  } else {
+    lock.attempts = (lock.attempts || 0) + 1;
+    if (lock.attempts >= MAX_ATTEMPTS) {
+      lock.lockedUntil = Date.now() + LOCK_DURATION_MS;
+      setLockData(lock);
+      checkLockState();
+    } else {
+      setLockData(lock);
+      document.getElementById('login-error').classList.add('show');
+      document.getElementById('login-pass').value = '';
+      checkLockState();
+    }
+  }
+}
+
+function logout() {
+  clearSession();
+  updateNavForAuth();
+  showPage('home');
+  showToast('Déconnexion réussie.');
+}
+
+function updateNavForAuth() {
+  const logged = isLoggedIn();
+  document.getElementById('nav-admin').style.display = logged ? '' : 'none';
+  document.getElementById('nav-logout').style.display = logged ? '' : 'none';
+}
+
+// Intercept admin page access
+const _origShowPage = null;
+
+// ─── DATA STORE ───
+const STORAGE_KEY = 'galerie_artworks';
+
+function getArtworks() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+}
+function saveArtworks(list) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+// ─── DEMO DATA ───
+function seedDemo() {
+  if (getArtworks().length > 0) return;
+  const demos = [
+    {
+      id: Date.now() + 1,
+      title: "Lumière d'automne",
+      year: 2023,
+      category: "Paysage",
+      desc: "Une forêt au crépuscule, baignée d'une lumière dorée qui filtre entre les frênes. Cette œuvre capture la sérénité d'un soir d'octobre, ce moment suspendu où la nature retient son souffle avant l'hiver.",
+      technique: "Huile sur toile",
+      dimensions: "60 × 80 cm",
+      price: 650,
+      availability: "Disponible",
+      image: null
+    },
+    {
+      id: Date.now() + 2,
+      title: "Femme au jardin",
+      year: 2024,
+      category: "Portrait",
+      desc: "Une figure féminine pensive parmi les fleurs de l'été, capturée dans un instant d'intimité. Le bleu profond de sa robe contraste avec les tons chauds des roses environnantes.",
+      technique: "Acrylique sur toile",
+      dimensions: "50 × 70 cm",
+      price: 480,
+      availability: "Vendu",
+      image: null
+    },
+    {
+      id: Date.now() + 3,
+      title: "Composition bleue n°3",
+      year: 2024,
+      category: "Abstrait",
+      desc: "Un dialogue entre matière et couleur : des couches successives d'azur, d'indigo et de blanc construisent une profondeur qui invite à la contemplation. L'œuvre est différente selon l'heure et l'angle de lumière.",
+      technique: "Techniques mixtes",
+      dimensions: "80 × 100 cm",
+      price: 920,
+      availability: "Disponible",
+      image: null
+    },
+    {
+      id: Date.now() + 4,
+      title: "Bord de mer, Bretagne",
+      year: 2022,
+      category: "Paysage",
+      desc: "Les falaises battues par l'Atlantique, sous un ciel dramatique. Peinte sur place en plein air, cette toile garde l'énergie du vent et l'odeur du sel.",
+      technique: "Huile sur toile",
+      dimensions: "40 × 60 cm",
+      price: 420,
+      availability: "Disponible",
+      image: null
+    },
+    {
+      id: Date.now() + 5,
+      title: "Douceur printanière",
+      year: 2023,
+      category: "Floral",
+      desc: "Un bouquet de pivoines écloses dans toute leur générosité, peint avec une touche légère et vibrante. La palette rosée évoque la joie simple et délicate du printemps.",
+      technique: "Acrylique sur toile",
+      dimensions: "30 × 40 cm",
+      price: 290,
+      availability: "Sur commande",
+      image: null
+    },
+    {
+      id: Date.now() + 6,
+      title: "Intérieur nocturne",
+      year: 2024,
+      category: "Intérieur",
+      desc: "Une pièce plongée dans la pénombre, éclairée d'une seule lampe. L'atmosphère intimiste rappelle les intérieurs flamands, mais transposée dans une sensibilité contemporaine.",
+      technique: "Huile sur bois",
+      dimensions: "45 × 55 cm",
+      price: 560,
+      availability: "Disponible",
+      image: null
+    }
+  ];
+  saveArtworks(demos);
+}
+
+// ─── PAGE ROUTING ───
+let currentPage = 'home';
+
+function showPage(page, artworkId) {
+  // Guard admin page
+  if (page === 'admin' && !isLoggedIn()) {
+    openLogin();
+    return;
+  }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + (page === 'pdp' ? 'pdp' : page)).classList.add('active');
+  const navMap = { home:'nav-home', gallery:'nav-gallery', pdp:'nav-gallery', admin:'nav-admin' };
+  const navEl = document.getElementById(navMap[page]);
+  if (navEl && navEl.style.display !== 'none') navEl.classList.add('active');
+  currentPage = page;
+  window.scrollTo(0, 0);
+
+  if (page === 'home') renderHome();
+  if (page === 'gallery') renderGallery();
+  if (page === 'pdp' && artworkId) renderPDP(artworkId);
+  if (page === 'admin') renderAdminList();
+}
+
+// ─── RENDER HOME ───
+function renderHome() {
+  const artworks = getArtworks().slice(0, 3);
+  const grid = document.getElementById('home-grid');
+  if (artworks.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎨</div><div class="empty-state-text">Aucune œuvre pour l\'instant.<br>Ajoutez-en depuis le back office.</div></div>';
+    return;
+  }
+  grid.innerHTML = artworks.map(a => cardHTML(a)).join('');
+  // Update hero with first artwork
+  const hero = document.getElementById('hero-artwork');
+  if (artworks[0] && artworks[0].image) {
+    hero.innerHTML = `<img src="${artworks[0].image}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+  }
+}
+
+// ─── GALLERY (PLP) ───
+let currentFilter = 'all';
+
+function renderGallery(filter) {
+  if (filter) currentFilter = filter;
+  const all = getArtworks();
+  const filtered = currentFilter === 'all' ? all : all.filter(a => a.category === currentFilter);
+
+  document.getElementById('gallery-count').textContent =
+    filtered.length === 0 ? 'Aucune œuvre' :
+    filtered.length + ' œuvre' + (filtered.length > 1 ? 's' : '');
+
+  // Build filter buttons from categories
+  const cats = [...new Set(all.map(a => a.category).filter(Boolean))];
+  const filtersEl = document.getElementById('gallery-filters');
+  filtersEl.innerHTML = `<button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" onclick="filterGallery('all', this)">Tout</button>` +
+    cats.map(c => `<button class="filter-btn ${currentFilter === c ? 'active' : ''}" onclick="filterGallery('${c}', this)">${c}</button>`).join('');
+
+  const grid = document.getElementById('gallery-grid');
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🎨</div><div class="empty-state-text">Aucune œuvre dans cette catégorie.</div></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(a => cardHTML(a)).join('');
+}
+
+function filterGallery(cat, btn) {
+  currentFilter = cat;
+  renderGallery(cat);
+}
+
+function cardHTML(a) {
+  const imgHtml = a.image
+    ? `<img src="${a.image}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+    : `<div class="artwork-card-img-placeholder">🖼️</div>`;
+
+  return `
+    <div class="artwork-card" onclick="showPage('pdp', ${a.id})">
+      <div class="artwork-card-img" style="position:relative;overflow:hidden;">
+        ${imgHtml}
+        <div class="artwork-card-overlay">
+          <span class="artwork-card-overlay-text">Voir l'œuvre</span>
+        </div>
+      </div>
+      <div class="artwork-card-info">
+        <div class="artwork-card-title">${a.title}</div>
+        <div class="artwork-card-meta">${a.category || ''} · ${a.year}</div>
+        ${a.price ? `<div class="artwork-card-price">${Number(a.price).toLocaleString('fr-FR')} €</div>` : ''}
+      </div>
+    </div>`;
+}
+
+// ─── PDP ───
+function renderPDP(id) {
+  const artwork = getArtworks().find(a => a.id == id);
+  if (!artwork) { showPage('gallery'); return; }
+
+  document.getElementById('pdp-category').textContent = artwork.category || '';
+  document.getElementById('pdp-title').textContent = artwork.title;
+  document.getElementById('pdp-year').textContent = artwork.year;
+  document.getElementById('pdp-desc').textContent = artwork.desc || 'Pas de description disponible.';
+  document.getElementById('pdp-technique').textContent = artwork.technique || '—';
+  document.getElementById('pdp-dimensions').textContent = artwork.dimensions || '—';
+  document.getElementById('pdp-availability').textContent = artwork.availability || '—';
+  document.getElementById('pdp-price').textContent = artwork.price ? Number(artwork.price).toLocaleString('fr-FR') + ' €' : '';
+
+  const avail = artwork.availability;
+  const ctaEl = document.getElementById('pdp-cta');
+  if (avail === 'Vendu') {
+    ctaEl.textContent = 'Œuvre vendue';
+    ctaEl.disabled = true;
+    ctaEl.style.opacity = '0.5';
+  } else {
+    ctaEl.textContent = 'Contacter l\'artiste';
+    ctaEl.disabled = false;
+    ctaEl.style.opacity = '1';
+    ctaEl.onclick = () => showToast('Message envoyé ! L\'artiste vous répondra bientôt.');
+  }
+
+  const imgContainer = document.getElementById('pdp-image-container');
+  if (artwork.image) {
+    imgContainer.innerHTML = `<img class="pdp-image" src="${artwork.image}" alt="${artwork.title}">`;
+  } else {
+    imgContainer.innerHTML = `<div class="pdp-image-placeholder">🖼️</div>`;
+  }
+}
+
+// ─── ADMIN ───
+function switchAdminTab(tab, btn) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('admin-' + tab).classList.add('active');
+  if (tab === 'list') renderAdminList();
+}
+
+function saveArtwork(e) {
+  e.preventDefault();
+  const editId = document.getElementById('f-edit-id').value;
+  const artworks = getArtworks();
+  const imageFile = document.getElementById('f-image').files[0];
+
+  const buildAndSave = (imageData) => {
+    const obj = {
+      id: editId ? Number(editId) : Date.now(),
+      title: document.getElementById('f-title').value,
+      year: document.getElementById('f-year').value,
+      category: document.getElementById('f-category').value,
+      desc: document.getElementById('f-desc').value,
+      technique: document.getElementById('f-technique').value,
+      dimensions: document.getElementById('f-dimensions').value,
+      price: document.getElementById('f-price').value,
+      availability: document.getElementById('f-availability').value,
+      image: imageData
+    };
+
+    if (editId) {
+      const idx = artworks.findIndex(a => a.id == editId);
+      if (idx !== -1) {
+        if (!imageData) obj.image = artworks[idx].image; // keep old if no new image
+        artworks[idx] = obj;
+      }
+    } else {
+      artworks.push(obj);
+    }
+    saveArtworks(artworks);
+    showToast(editId ? 'Œuvre mise à jour !' : 'Œuvre ajoutée à la galerie !');
+    resetForm();
+  };
+
+  if (imageFile) {
+    const reader = new FileReader();
+    reader.onload = (ev) => buildAndSave(ev.target.result);
+    reader.readAsDataURL(imageFile);
+  } else {
+    buildAndSave(null);
+  }
+}
+
+function resetForm() {
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-year').value = '';
+  document.getElementById('f-category').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-technique').value = '';
+  document.getElementById('f-dimensions').value = '';
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-availability').value = 'Disponible';
+  document.getElementById('f-image').value = '';
+  document.getElementById('f-edit-id').value = '';
+  document.getElementById('img-preview').style.display = 'none';
+  document.getElementById('form-submit-btn').textContent = 'Ajouter l\'œuvre';
+}
+
+function cancelEdit() {
+  resetForm();
+}
+
+function previewImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const prev = document.getElementById('img-preview');
+    prev.src = ev.target.result;
+    prev.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderAdminList() {
+  const artworks = getArtworks();
+  const el = document.getElementById('admin-artworks-list');
+  if (artworks.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎨</div><div class="empty-state-text">Aucune œuvre ajoutée.<br>Utilisez l\'onglet "Ajouter" pour commencer.</div></div>';
+    return;
+  }
+  el.innerHTML = '<div class="admin-list">' + artworks.map(a => `
+    <div class="admin-list-item">
+      <div class="admin-list-thumb">
+        ${a.image ? `<img src="${a.image}" alt="${a.title}">` : '🖼️'}
+      </div>
+      <div class="admin-list-info">
+        <div class="admin-list-name">${a.title}</div>
+        <div class="admin-list-meta">${a.category || ''} · ${a.year} · ${a.availability}</div>
+      </div>
+      <div class="admin-list-actions">
+        <button class="btn-icon edit" onclick="editArtwork(${a.id})">Modifier</button>
+        <button class="btn-icon" onclick="deleteArtwork(${a.id})">Supprimer</button>
+      </div>
+    </div>`).join('') + '</div>';
+}
+
+function editArtwork(id) {
+  const artwork = getArtworks().find(a => a.id === id);
+  if (!artwork) return;
+  // Switch to add tab
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab')[0].classList.add('active');
+  document.getElementById('admin-add').classList.add('active');
+
+  document.getElementById('f-title').value = artwork.title;
+  document.getElementById('f-year').value = artwork.year;
+  document.getElementById('f-category').value = artwork.category || '';
+  document.getElementById('f-desc').value = artwork.desc || '';
+  document.getElementById('f-technique').value = artwork.technique || '';
+  document.getElementById('f-dimensions').value = artwork.dimensions || '';
+  document.getElementById('f-price').value = artwork.price || '';
+  document.getElementById('f-availability').value = artwork.availability || 'Disponible';
+  document.getElementById('f-edit-id').value = artwork.id;
+  document.getElementById('form-submit-btn').textContent = 'Mettre à jour';
+
+  if (artwork.image) {
+    const prev = document.getElementById('img-preview');
+    prev.src = artwork.image;
+    prev.style.display = 'block';
+  }
+  window.scrollTo(0, 200);
+}
+
+function deleteArtwork(id) {
+  if (!confirm('Supprimer cette œuvre définitivement ?')) return;
+  const artworks = getArtworks().filter(a => a.id !== id);
+  saveArtworks(artworks);
+  renderAdminList();
+  showToast('Œuvre supprimée.');
+}
+
+// ─── TOAST ───
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─── URL HASH ROUTING ───
+function handleHash() {
+  if (window.location.hash === '#admin') {
+    window.location.hash = '';
+    if (isLoggedIn()) showPage('admin');
+    else openLogin();
+  }
+}
+
+// ─── INIT ───
+seedDemo();
+updateNavForAuth();
+renderHome();
+handleHash();
+</script>
+</body>
+</html>
