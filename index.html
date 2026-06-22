@@ -1373,7 +1373,11 @@ function saveArtwork(e) {
   const artworks = getArtworks();
   const imageFile = document.getElementById('f-image').files[0];
 
-  const buildAndSave = (imageData) => {
+  const oldImage = editId
+   ? (artworks.find(a => String(a.id) === String(editId)) || {}).image || null
+   : null;
+ 
+const buildAndSave = (imageData) => {
     const obj = {
       id: editId ? Number(editId) : Date.now(),
       title: document.getElementById('f-title').value,
@@ -1384,14 +1388,15 @@ function saveArtwork(e) {
       dimensions: document.getElementById('f-dimensions').value,
       price: document.getElementById('f-price').value,
       availability: document.getElementById('f-availability').value,
-      image: imageData
+      image: imageData || oldImage  // nouvelle image ou ancienne si pas de changement
     };
 
     if (editId) {
-      const idx = artworks.findIndex(a => a.id == editId);
+      const idx = artworks.findIndex(a => String(a.id) === String(editId));
       if (idx !== -1) {
-        if (!imageData) obj.image = artworks[idx].image; // keep old if no new image
         artworks[idx] = obj;
+      } else {
+        artworks.push(obj);
       }
     } else {
       artworks.push(obj);
@@ -1399,6 +1404,10 @@ function saveArtwork(e) {
     saveArtworks(artworks);
     showToast(editId ? 'Œuvre mise à jour !' : 'Œuvre ajoutée à la galerie !');
     resetForm();
+    // Rafraîchir la liste si on est dessus
+    if (document.getElementById('admin-list').classList.contains('active')) {
+      renderAdminList();
+    }
   };
 
   if (imageFile) {
