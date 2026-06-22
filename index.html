@@ -8,7 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* 1. TA POLICE PERSONNALISÉE */
         :root {
             --font-serif: "Playfair Display", serif;
         }
@@ -55,8 +54,9 @@
     </footer>
 
     <script>
-        // /!\ METS TON LIEN GOOGLE SHEETS (.CSV) ICI /!\
+        // /!\ CONFIGURATION /!\
         const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQk9Dml6V_k88-UPF6iGnabqOLxgChxRG4Q0_cIQVF4YcAE3bS0qNaXy1h4URmgaLIx-HOCn7TyDd_m/pub?output=csv";
+        const EMAIL_CONTACT = "jonathanjouffroy@gmail.com"; // Remplace par l'adresse de réception des messages
 
         let catalogueOeuvres = [];
 
@@ -75,7 +75,6 @@
                                 normalise[cle.toLowerCase().trim().replace(/_/g, '')] = rangee[cle];
                             }
 
-                            // DÉCOUPE DES IMAGES (Séparées par une virgule dans l'Excel)
                             const champImageComplet = normalise.imageurl || normalise.image || "";
                             const listeImages = champImageComplet.split(',')
                                 .map(url => url.trim())
@@ -99,7 +98,6 @@
             }
         }
 
-        // LE ROUTEUR (Inchangé)
         function router() {
             const hash = window.location.hash || '#home';
             const conteneur = document.getElementById('app-content');
@@ -115,7 +113,6 @@
             window.scrollTo(0, 0);
         }
 
-        // PAGE PRINCIPALE (Ajustée pour prendre la 1ère image de la liste)
         function afficherPagePrincipale(cible) {
             let htmlPresentation = `
                 <div class="grid md:grid-cols-2 gap-16 items-center pb-20 border-b border-stone-100 mb-20">
@@ -160,7 +157,6 @@
             `;
         }
 
-        // PAGE DÉTAIL (Ajustée pour afficher les vignettes cliquables)
         function afficherPDP(cible, id) {
             const oeuvre = catalogueOeuvres.find(o => o.id === id);
             if (!oeuvre) { window.location.hash = '#home'; return; }
@@ -186,23 +182,47 @@
                     <a href="#home" class="text-[10px] uppercase tracking-[0.3em] text-stone-400 hover:text-stone-900 flex items-center gap-3 mb-16 transition">
                         ← Retour à l'archive
                     </a>
-                    <div class="grid md:grid-cols-12 gap-20 items-start">
-                        <div class="md:col-span-8">
+                    <div class="grid md:grid-cols-12 gap-16 items-start">
+                        <div class="md:col-span-7 lg:col-span-8">
                             <div class="bg-white shadow-2xl p-4 border border-stone-100 flex items-center justify-center">
                                 <img id="pdp-main-image" src="${imagePrincipale}" alt="${oeuvre.titre}" class="w-full h-auto max-h-[75vh] object-contain">
                             </div>
                             ${htmlVignettes}
                         </div>
                         
-                        <div class="md:col-span-4 space-y-12 pt-4">
-                            <div class="space-y-4 border-b border-stone-100 pb-10">
-                                <h1 class="text-4xl font-serif text-stone-900 leading-tight">${oeuvre.titre}</h1>
-                                <p class="text-stone-400 font-serif italic text-base">${oeuvre.technique} — ${oeuvre.dimensions}</p>
+                        <div class="md:col-span-5 lg:col-span-4 space-y-10 pt-4 bg-white p-6 border border-stone-100 shadow-sm">
+                            <div class="space-y-4 border-b border-stone-100 pb-6">
+                                <h1 class="text-3xl font-serif text-stone-900 leading-tight">${oeuvre.titre}</h1>
+                                <p class="text-stone-400 font-serif italic text-sm">${oeuvre.technique} — ${oeuvre.dimensions}</p>
                             </div>
-                            <div class="space-y-6">
+                            <div class="space-y-4">
                                 <h4 class="text-[10px] uppercase tracking-[0.2em] font-bold text-stone-300">À propos de l'œuvre</h4>
-                                <p class="text-stone-600 leading-relaxed text-lg font-light whitespace-pre-line">${oeuvre.description}</p>
+                                <p class="text-stone-600 leading-relaxed text-sm font-light whitespace-pre-line">${oeuvre.description}</p>
                             </div>
+
+                            <form action="https://formsubmit.co/${EMAIL_CONTACT}" method="POST" class="space-y-4 pt-6 border-t border-stone-100">
+                                <h4 class="text-[10px] uppercase tracking-[0.2em] font-bold text-stone-900 mb-2">Demande d'informations</h4>
+                                
+                                <input type="hidden" name="_subject" value="Nouvelle demande - ${oeuvre.titre}">
+                                <input type="hidden" name="Oeuvre Interet" value="${oeuvre.titre} (ID: ${oeuvre.id})">
+                                <input type="hidden" name="_template" value="table">
+                                
+                                <div>
+                                    <label class="block text-[9px] uppercase tracking-wider text-stone-400 mb-1">Votre Nom</label>
+                                    <input type="text" name="name" required class="w-full bg-stone-50 border border-stone-200 px-3 py-2 text-xs focus:outline-none focus:border-stone-900 transition">
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] uppercase tracking-wider text-stone-400 mb-1">Votre Email</label>
+                                    <input type="email" name="email" required class="w-full bg-stone-50 border border-stone-200 px-3 py-2 text-xs focus:outline-none focus:border-stone-900 transition">
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] uppercase tracking-wider text-stone-400 mb-1">Message</label>
+                                    <textarea name="message" rows="4" required class="w-full bg-stone-50 border border-stone-200 px-3 py-2 text-xs focus:outline-none focus:border-stone-900 transition resize-none">Bonjour Calar.artiste,\n\nJe souhaite obtenir des informations (tarifs, disponibilité, expédition) concernant votre œuvre intitulée "${oeuvre.titre}".\n\nCordialement,</textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-stone-900 text-white text-[10px] uppercase tracking-widest font-medium py-3 hover:bg-stone-800 transition cursor-pointer">
+                                    Envoyer la demande
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
