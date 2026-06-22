@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        /* 1. TA POLICE PERSONNALISÉE */
         :root {
             --font-serif: "Playfair Display", serif;
         }
@@ -35,7 +36,7 @@
 
     <main id="app-content" class="flex-grow max-w-6xl w-full mx-auto px-6 py-12">
         <div class="flex justify-center items-center h-64">
-            <p class="text-stone-400 font-serif italic animate-pulse">L'univers de Calar.artiste take vie...</p>
+            <p class="text-stone-400 font-serif italic animate-pulse">L'univers de Calar.artiste prend vie...</p>
         </div>
     </main>
 
@@ -54,7 +55,8 @@
     </footer>
 
     <script>
-        const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQk9Dml6V_k88-UPF6iGnabqOLxgChxRG4Q0_cIQVF4YcAE3bS0qNaXy1h4URmgaLIx-HOCn7TyDd_m/pub?output=csv"; 
+        // /!\ METS TON LIEN GOOGLE SHEETS (.CSV) ICI /!\
+        const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQk9Dml6V_k88-UPF6iGnabqOLxgChxRG4Q0_cIQVF4YcAE3bS0qNaXy1h4URmgaLIx-HOCn7TyDd_m/pub?output=csv";
 
         let catalogueOeuvres = [];
 
@@ -73,8 +75,8 @@
                                 normalise[cle.toLowerCase().trim().replace(/_/g, '')] = rangee[cle];
                             }
 
-                            // GESTION MULTI-IMAGES : On découpe le texte par les virgules
-                            const champImage Complet = normalise.imageurl || normalise.image || "";
+                            // DÉCOUPE DES IMAGES (Séparées par une virgule dans l'Excel)
+                            const champImageComplet = normalise.imageurl || normalise.image || "";
                             const listeImages = champImageComplet.split(',')
                                 .map(url => url.trim())
                                 .filter(url => url.length > 0);
@@ -85,7 +87,7 @@
                                 description: normalise.description || "",
                                 dimensions: normalise.dimensions || "",
                                 technique: normalise.technique || "",
-                                images: listeImages // Stocke le tableau de toutes les images
+                                images: listeImages 
                             };
                         });
                         window.addEventListener('hashchange', router);
@@ -97,6 +99,7 @@
             }
         }
 
+        // LE ROUTEUR (Inchangé)
         function router() {
             const hash = window.location.hash || '#home';
             const conteneur = document.getElementById('app-content');
@@ -112,6 +115,7 @@
             window.scrollTo(0, 0);
         }
 
+        // PAGE PRINCIPALE (Ajustée pour prendre la 1ère image de la liste)
         function afficherPagePrincipale(cible) {
             let htmlPresentation = `
                 <div class="grid md:grid-cols-2 gap-16 items-center pb-20 border-b border-stone-100 mb-20">
@@ -129,9 +133,7 @@
 
             const oeuvresValides = catalogueOeuvres.filter(o => o.id !== "");
             let htmlGrille = oeuvresValides.map(oeuvre => {
-                // On prend la première image de la liste, ou une image vide par défaut
                 const imageAffichee = oeuvre.images.length > 0 ? oeuvre.images[0] : "";
-                
                 return `
                     <a href="#oeuvre/${oeuvre.id}" class="group block space-y-4">
                         <div class="aspect-square bg-stone-100 overflow-hidden shadow-sm border border-stone-100">
@@ -158,18 +160,18 @@
             `;
         }
 
+        // PAGE DÉTAIL (Ajustée pour afficher les vignettes cliquables)
         function afficherPDP(cible, id) {
             const oeuvre = catalogueOeuvres.find(o => o.id === id);
             if (!oeuvre) { window.location.hash = '#home'; return; }
 
             const imagePrincipale = oeuvre.images.length > 0 ? oeuvre.images[0] : "";
 
-            // Génération des vignettes seulement s'il y a plusieurs images
             let htmlVignettes = "";
             if (oeuvre.images.length > 1) {
                 htmlVignettes = `
                     <div class="flex flex-wrap gap-2 mt-4">
-                        ${oeuvre.images.map((img, index) => `
+                        ${oeuvre.images.map(img => `
                             <button onclick="document.getElementById('pdp-main-image').src='${img}'" 
                                     class="w-16 h-16 bg-stone-100 border border-stone-200 overflow-hidden hover:border-stone-900 focus:border-stone-900 transition p-0.5 cursor-pointer">
                                 <img src="${img}" class="w-full h-full object-cover">
