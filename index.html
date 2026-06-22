@@ -3,35 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calartiste</title>
+    <title>Calar.artiste | Portfolio</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Définition de la variable de police demandée */
+        :root {
+            --font-serif: "Playfair Display", serif;
+        }
+        
+        /* Application de la police Serif aux titres et au logo */
+        .font-serif {
+            font-family: var(--font-serif);
+        }
+        
+        /* Transition douce pour les images de la galerie */
+        .group-hover\:scale-105 {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 </head>
-<body class="bg-stone-50 text-stone-800 font-sans min-height-screen flex flex-col">
+<body class="bg-stone-50 text-stone-800 font-sans min-h-screen flex flex-col">
 
-    <nav class="border-b border-stone-200 bg-white sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="#home" class="text-xl font-serif tracking-widest uppercase">Calartiste</a>
-            <div class="space-x-6 text-sm uppercase tracking-wider font-medium">
-                <a href="#home" class="hover:text-stone-500 transition">Accueil & Galerie</a>
+    <nav class="border-b border-stone-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+            <a href="#home" class="text-2xl font-serif tracking-widest uppercase font-bold text-stone-900">Calar.artiste</a>
+            <div class="space-x-8 text-xs uppercase tracking-[0.2em] font-medium">
+                <a href="#home" class="hover:text-stone-500 transition">Portfolio</a>
             </div>
         </div>
     </nav>
 
-    <main id="app-content" class="flex-grow max-w-6xl w-full mx-auto px-4 py-8">
-        </main>
+    <main id="app-content" class="flex-grow max-w-6xl w-full mx-auto px-6 py-12">
+        <div class="flex justify-center items-center h-64">
+            <p class="text-stone-400 font-serif italic animate-pulse">L'univers de Calar.artiste prend vie...</p>
+        </div>
+    </main>
 
-    <footer class="border-t border-stone-200 bg-stone-100 py-6 text-center text-xs text-stone-500 uppercase tracking-widest">
-        &copy; 2026 Tous droits réservés — Œuvres originales
+    <footer class="border-t border-stone-100 bg-stone-50 py-16">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col items-center space-y-8">
+            <a href="https://www.instagram.com/calar.artiste" target="_blank" 
+               class="text-4xl text-stone-300 hover:text-stone-900 transition-all duration-500 transform hover:rotate-12 hover:scale-110">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+            <div class="text-center space-y-3">
+                <p class="text-[10px] font-serif italic text-stone-400 tracking-widest uppercase">Calar.artiste</p>
+                <div class="h-px w-8 bg-stone-200 mx-auto"></div>
+                <p class="text-[9px] text-stone-400 uppercase tracking-[0.3em]">&copy; 2026 — Archive d'Atelier</p>
+            </div>
+        </div>
     </footer>
 
     <script>
-        // Ton URL Google Sheet validée
         const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQk9Dml6V_k88-UPF6iGnabqOLxgChxRG4Q0_cIQVF4YcAE3bS0qNaXy1h4URmgaLIx-HOCn7TyDd_m/pub?output=csv";
 
         let catalogueOeuvres = [];
 
-        // 1. Chargement des données
         async function initialiserSite() {
             try {
                 const response = await fetch(URL_CSV);
@@ -41,118 +70,111 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        catalogueOeuvres = results.data;
-                        // Écoute les changements pour ouvrir le détail d'un tableau
+                        catalogueOeuvres = results.data.map(rangee => {
+                            const normalise = {};
+                            for (let cle in rangee) {
+                                normalise[cle.toLowerCase().trim().replace(/_/g, '')] = rangee[cle];
+                            }
+                            return {
+                                id: normalise.id || normalise.num || "",
+                                titre: normalise.titre || "Sans titre",
+                                description: normalise.description || "",
+                                dimensions: normalise.dimensions || "",
+                                technique: normalise.technique || "",
+                                image_url: normalise.imageurl || normalise.image || ""
+                            };
+                        });
                         window.addEventListener('hashchange', router);
                         router();
                     }
                 });
             } catch (error) {
-                document.getElementById('app-content').innerHTML = `<p class="text-center text-red-500 py-12">Erreur lors du chargement des œuvres. Vérifie le lien CSV.</p>`;
+                document.getElementById('app-content').innerHTML = `<p class="text-center text-red-500 py-12">Connexion interrompue.</p>`;
             }
         }
 
-        // 2. Le Routeur (Gère l'affichage Accueil vs Page Détail)
         function router() {
             const hash = window.location.hash || '#home';
             const conteneur = document.getElementById('app-content');
             
-            if (hash === '#home') {
+            if (hash === '#home' || hash === '') {
                 afficherPagePrincipale(conteneur);
             } else if (hash.startsWith('#oeuvre/')) {
                 const idOeuvre = hash.split('/')[1];
                 afficherPDP(conteneur, idOeuvre);
             } else {
-                conteneur.innerHTML = `<h2 class="text-center py-12">Page introuvable</h2>`;
+                window.location.hash = '#home';
             }
             window.scrollTo(0, 0);
         }
 
-        // 3. PAGE PRINCIPALE (Présentation + Galerie Excel combinées)
         function afficherPagePrincipale(cible) {
-            // Bloc Présentation du haut
             let htmlPresentation = `
-                <div class="grid md:grid-cols-2 gap-12 items-center py-12 border-b border-stone-200 mb-12">
-                    <div class="space-y-6">
-                        <h1 class="text-4xl md:text-5xl font-serif text-stone-900 leading-tight">Explorer l'invisible à travers la couleur.</h1>
-                        <p class="text-stone-600 leading-relaxed text-lg">
-                            Bienvenue dans l'univers de l'artiste. À travers ses toiles, elle capture les émotions éphémères et les paysages abstraits. Chaque coup de pinceau est une histoire, chaque texture une invitation au voyage.
+                <div class="grid md:grid-cols-2 gap-16 items-center pb-20 border-b border-stone-100 mb-20">
+                    <div class="space-y-8">
+                        <h1 class="text-5xl md:text-6xl font-serif text-stone-900 leading-[1.1]">Explorer l'invisible.</h1>
+                        <p class="text-stone-500 leading-relaxed text-lg font-light">
+                            Bienvenue dans l'univers de <span class="font-serif italic">Calar.artiste</span>. À travers ses toiles, elle capture les émotions éphémères et les paysages abstraits. Chaque coup de pinceau est une invitation.
                         </p>
                     </div>
-                    <div class="aspect-[4/5] bg-stone-200 overflow-hidden shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=800" alt="Atelier d'artiste" class="w-full h-full object-cover">
+                    <div class="aspect-[4/5] bg-stone-200 overflow-hidden shadow-2xl relative">
+                        <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=800" alt="Atelier" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700">
                     </div>
                 </div>
             `;
 
-            // Bloc Galerie du bas (généré à partir de l'Excel)
-            let htmlGalerie = "";
-            
-            if (catalogueOeuvres.length === 0) {
-                htmlGalerie = `<p class="text-center py-12 text-stone-500">Aucune œuvre trouvée dans le fichier Excel. Vérifie tes lignes.</p>`;
-            } else {
-                let htmlGrille = catalogueOeuvres.map(oeuvre => `
-                    <a href="#oeuvre/${oeuvre.id}" class="group block space-y-3">
-                        <div class="aspect-square bg-stone-100 overflow-hidden shadow-sm">
-                            <img src="${oeuvre.image_url}" alt="${oeuvre.titre}" class="w-full h-full object-cover group-hover:scale-102 transition duration-300">
-                        </div>
-                        <div class="flex justify-between items-baseline pt-1">
-                            <h3 class="font-serif text-lg text-stone-900 group-hover:underline">${oeuvre.titre}</h3>
-                            <span class="text-xs text-stone-400 font-medium uppercase">${oeuvre.technique}</span>
-                        </div>
-                    </a>
-                `).join('');
-
-                htmlGalerie = `
-                    <div class="py-6 space-y-8">
-                        <div class="text-center space-y-2">
-                            <h2 class="text-3xl font-serif tracking-wide text-stone-900">La Collection</h2>
-                        </div>
-                        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-                            ${htmlGrille}
-                        </div>
+            const oeuvresValides = catalogueOeuvres.filter(o => o.id !== "");
+            let htmlGrille = oeuvresValides.map(oeuvre => `
+                <a href="#oeuvre/${oeuvre.id}" class="group block space-y-4">
+                    <div class="aspect-square bg-stone-100 overflow-hidden shadow-sm border border-stone-100">
+                        <img src="${oeuvre.image_url}" alt="${oeuvre.titre}" class="w-full h-full object-cover group-hover:scale-105 transition">
                     </div>
-                `;
-            }
+                    <div class="flex justify-between items-baseline px-1">
+                        <h3 class="font-serif text-xl text-stone-900 group-hover:italic transition-all">${oeuvre.titre}</h3>
+                        <span class="text-[9px] text-stone-400 font-bold uppercase tracking-[0.2em]">${oeuvre.technique}</span>
+                    </div>
+                </a>
+            `).join('');
 
-            // On injecte les deux blocs l'un après l'autre
-            cible.innerHTML = htmlPresentation + htmlGalerie;
+            cible.innerHTML = htmlPresentation + `
+                <div class="py-10 space-y-16">
+                    <div class="text-center">
+                        <h2 class="text-4xl font-serif text-stone-900">Œuvres Récentes</h2>
+                        <div class="h-px w-16 bg-stone-900 mx-auto mt-6"></div>
+                    </div>
+                    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-12">
+                        ${htmlGrille}
+                    </div>
+                </div>
+            `;
         }
 
-        // 4. PAGE DÉTAIL (Quand on clique sur un tableau)
         function afficherPDP(cible, id) {
             const oeuvre = catalogueOeuvres.find(o => o.id === id);
-
-            if (!oeuvre) {
-                cible.innerHTML = `<div class="text-center py-12"><p class="mb-4">Œuvre introuvable.</p><a href="#home" class="underline text-stone-600">Retour à l'accueil</a></div>`;
-                return;
-            }
-
+            if (!oeuvre) { window.location.hash = '#home'; return; }
             cible.innerHTML = `
-                <div class="py-6">
-                    <a href="#home" class="text-xs uppercase tracking-widest text-stone-500 hover:text-stone-900 transition flex items-center gap-2 mb-8">
-                        ← Retour à la galerie
+                <div class="animate-in fade-in duration-700">
+                    <a href="#home" class="text-[10px] uppercase tracking-[0.3em] text-stone-400 hover:text-stone-900 flex items-center gap-3 mb-16 transition">
+                        ← Retour à l'archive
                     </a>
-                    <div class="grid md:grid-cols-12 gap-12 items-start">
-                        <div class="md:col-span-7 bg-stone-100 shadow-md">
-                            <img src="${oeuvre.image_url}" alt="${oeuvre.titre}" class="w-full h-auto max-h-[80vh] object-contain mx-auto">
+                    <div class="grid md:grid-cols-12 gap-20 items-start">
+                        <div class="md:col-span-8 bg-white shadow-2xl p-4 border border-stone-100">
+                            <img src="${oeuvre.image_url}" alt="${oeuvre.titre}" class="w-full h-auto max-h-[85vh] object-contain">
                         </div>
-                        <div class="md:col-span-5 space-y-6 sticky top-24">
-                            <div class="border-b border-stone-200 pb-4 space-y-2">
-                                <h1 class="text-3xl md:text-4xl font-serif text-stone-900">${oeuvre.titre}</h1>
-                                <p class="text-stone-500 italic text-sm">${oeuvre.technique} — ${oeuvre.dimensions}</p>
+                        <div class="md:col-span-4 space-y-12 pt-4">
+                            <div class="space-y-4 border-b border-stone-100 pb-10">
+                                <h1 class="text-4xl font-serif text-stone-900 leading-tight">${oeuvre.titre}</h1>
+                                <p class="text-stone-400 font-serif italic text-base">${oeuvre.technique} — ${oeuvre.dimensions}</p>
                             </div>
-                            <div class="space-y-4">
-                                <h4 class="text-xs uppercase tracking-widest font-semibold text-stone-400">À propos de l'œuvre</h4>
-                                <p class="text-stone-600 leading-relaxed whitespace-pre-line">${oeuvre.description}</p>
+                            <div class="space-y-6">
+                                <h4 class="text-[10px] uppercase tracking-[0.2em] font-bold text-stone-300">À propos de l'œuvre</h4>
+                                <p class="text-stone-600 leading-relaxed text-lg font-light">${oeuvre.description}</p>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
         }
-
-        // Lancement du site
         initialiserSite();
     </script>
 </body>
