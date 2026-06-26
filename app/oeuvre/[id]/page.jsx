@@ -17,18 +17,20 @@ export default function OeuvrePage() {
     supabase.from('artworks').select('*').eq('id', id).single()
       .then(({ data, error }) => {
         if (error || !data) router.push('/galerie')
-        else setArtwork(data)
+        else {
+          setArtwork(data)
+          // Mise à jour dynamique du titre de la page
+          document.title = `${data.title} · Calar.Artiste`
+        }
       })
   }, [id])
 
-  // Ferme la lightbox avec Escape
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') setLightboxOpen(false) }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [])
 
-  // Bloque le scroll quand lightbox ouverte
   useEffect(() => {
     document.body.style.overflow = lightboxOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
@@ -40,8 +42,39 @@ export default function OeuvrePage() {
 
   const vendu = artwork.availability === 'Vendu'
 
+  // JSON-LD pour l'œuvre
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'VisualArtwork',
+    name: artwork.title,
+    description: artwork.description,
+    image: artwork.image_url,
+    dateCreated: artwork.year,
+    artMedium: artwork.technique,
+    artworkSurface: 'Toile',
+    width: artwork.dimensions,
+    offers: artwork.price && artwork.availability === 'Disponible' ? {
+      '@type': 'Offer',
+      price: artwork.price,
+      priceCurrency: 'EUR',
+      availability: 'https://schema.org/InStock'
+    } : undefined,
+    creator: {
+      '@type': 'Person',
+      name: 'Clara',
+      alternateName: 'Calar.Artiste',
+      sameAs: 'https://www.instagram.com/calar.artiste'
+    }
+  }
+
   return (
     <>
+      {/* JSON-LD structuré pour Google */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
+      />
+
       <div style={{paddingTop:80}}>
         <button onClick={() => router.push('/galerie')} style={{
           margin:'28px 48px 0', fontSize:11, fontWeight:500, letterSpacing:'0.1em',
@@ -53,7 +86,7 @@ export default function OeuvrePage() {
           display:'grid', gridTemplateColumns:'1.1fr 1fr', gap:80,
           padding:'48px 48px 80px', alignItems:'start'
         }}>
-          {/* Image — cliquable pour lightbox */}
+          {/* Image cliquable */}
           <div style={{position:'sticky', top:100}}>
             <div
               onClick={() => artwork.image_url && setLightboxOpen(true)}
@@ -63,14 +96,7 @@ export default function OeuvrePage() {
               }}
             >
               {artwork.image_url
-                ? <Image
-                    src={artwork.image_url}
-                    alt={artwork.title}
-                    fill
-                    style={{objectFit:'cover'}}
-                    sizes="50vw"
-                    unoptimized
-                  />
+                ? <Image src={artwork.image_url} alt={`${artwork.title} — Calar.Artiste`} fill style={{objectFit:'cover'}} sizes="50vw" unoptimized/>
                 : <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:64,opacity:0.15}}>🖼️</div>
               }
               {artwork.image_url && (
@@ -80,9 +106,7 @@ export default function OeuvrePage() {
                   fontSize:10, fontWeight:500, letterSpacing:'0.1em',
                   textTransform:'uppercase', padding:'6px 10px',
                   backdropFilter:'blur(4px)'
-                }}>
-                  🔍 Agrandir
-                </div>
+                }}>🔍 Agrandir</div>
               )}
             </div>
           </div>
@@ -148,43 +172,26 @@ export default function OeuvrePage() {
             padding:24, cursor:'zoom-out'
           }}
         >
-          {/* Bouton fermer */}
           <button
             onClick={() => setLightboxOpen(false)}
             style={{
               position:'absolute', top:20, right:24,
               background:'none', border:'none', color:'rgba(255,255,255,0.7)',
-              fontSize:28, cursor:'pointer', lineHeight:1,
-              transition:'color 0.2s'
+              fontSize:28, cursor:'pointer', lineHeight:1
             }}
-            onMouseEnter={e => e.currentTarget.style.color = '#fff'}
-            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
           >✕</button>
 
-          {/* Image + légende en dessous */}
           <div
             onClick={e => e.stopPropagation()}
-            style={{
-              display:'flex', flexDirection:'column', alignItems:'center',
-              maxWidth:'90vw', maxHeight:'90vh'
-            }}
+            style={{display:'flex', flexDirection:'column', alignItems:'center', maxWidth:'90vw', maxHeight:'90vh'}}
           >
             <img
               src={artwork.image_url}
               alt={artwork.title}
-              style={{
-                maxWidth:'90vw', maxHeight:'75vh',
-                objectFit:'contain', display:'block',
-                boxShadow:'0 40px 80px rgba(0,0,0,0.5)'
-              }}
+              style={{maxWidth:'90vw', maxHeight:'75vh', objectFit:'contain', display:'block', boxShadow:'0 40px 80px rgba(0,0,0,0.5)'}}
             />
-            {/* Légende sous l'image */}
             <div style={{marginTop:20, textAlign:'center'}}>
-              <p style={{
-                fontFamily:"'Cormorant Garant', serif",
-                fontSize:20, fontWeight:300, color:'rgba(255,255,255,0.9)',
-                letterSpacing:'0.04em'
-              }}>
+              <p style={{fontFamily:"'Cormorant Garant', serif", fontSize:20, fontWeight:300, color:'rgba(255,255,255,0.9)', letterSpacing:'0.04em'}}>
                 {artwork.title}
                 {artwork.year && <span style={{color:'var(--gold)', marginLeft:12}}>· {artwork.year}</span>}
               </p>
@@ -198,9 +205,7 @@ export default function OeuvrePage() {
         </div>
       )}
 
-      {contactOpen && (
-        <ContactModal artwork={artwork} onClose={() => setContactOpen(false)} />
-      )}
+      {contactOpen && <ContactModal artwork={artwork} onClose={() => setContactOpen(false)} />}
 
       <style>{`
         @media (max-width: 768px) {
@@ -209,12 +214,8 @@ export default function OeuvrePage() {
             padding: 20px !important;
             gap: 32px !important;
           }
-          div[style*="position: sticky"] {
-            position: static !important;
-          }
-          button[style*="margin: 28px 48px"] {
-            margin: 20px 20px 0 !important;
-          }
+          div[style*="position: sticky"] { position: static !important; }
+          button[style*="margin: 28px 48px"] { margin: 20px 20px 0 !important; }
         }
       `}</style>
     </>
