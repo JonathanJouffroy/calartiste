@@ -10,9 +10,13 @@ const DEFAULT_SETTINGS = {
   aboutLine1: 'Infirmière', aboutLine2: 'artiste',
   aboutText: "Clara est infirmière le jour, artiste en permanence. Son art intuitif et abstrait puise dans les émotions du soin, la beauté de la nature et le chemin vers la guérison.",
   featuredId: '',
-  recentId1: '',
-  recentId2: '',
-  recentId3: ''
+  recentId1: '', recentId2: '', recentId3: '',
+  aboutPageTitle:    'Clara',
+  aboutPageSubtitle: 'Infirmière & Artiste',
+  aboutPageIntro:    "Clara est infirmière le jour, artiste en permanence. Son art intuitif et abstrait puise dans les émotions du soin, la beauté de la nature et le chemin vers la guérison.",
+  aboutPageDemarche: "Chaque toile naît d'une émotion, d'un moment suspendu, d'une couleur aperçue dans la lumière du matin.",
+  aboutPageCitation: '"Mon art vous fait voyager entre émotion, nature et guérison."',
+  aboutPagePhoto:    '',
 }
 
 function authHeaders() {
@@ -203,29 +207,75 @@ export default function AdminPage() {
           </form>
         )}
 
-        {/* LIST */}
+        {/* LIST avec drag & drop */}
         {tab === 'list' && (
-          <div style={{display:'grid', gap:12}}>
+          <div>
             {artworks.length === 0
               ? <div style={{textAlign:'center', padding:'80px 0', color:'var(--stone)'}}>Aucune œuvre. Ajoutez-en depuis l'onglet "Ajouter".</div>
-              : artworks.map(a => (
-                <div key={a.id} style={{display:'flex', alignItems:'center', gap:20, padding:'16px 20px', background:'var(--light)', border:'1px solid rgba(197,110,74,0.1)'}}>
-                  <div style={{width:56, height:56, flexShrink:0, overflow:'hidden', background:'var(--cream)', position:'relative'}}>
-                    {a.image_url
-                      ? <Image src={a.image_url} alt={a.title} fill style={{objectFit:'cover'}}/>
-                      : <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>🖼️</div>
-                    }
+              : <>
+                  <p style={{fontSize:12, color:'var(--stone)', marginBottom:16}}>
+                    ↕ Glissez les œuvres pour les réordonner
+                  </p>
+                  <div style={{display:'grid', gap:8}}>
+                    {artworks.map((a, idx) => (
+                      <div
+                        key={a.id}
+                        draggable
+                        onDragStart={e => { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', idx) }}
+                        onDragOver={e => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--gold)' }}
+                        onDragLeave={e => { e.currentTarget.style.borderColor = 'rgba(197,110,74,0.1)' }}
+                        onDrop={e => {
+                          e.preventDefault()
+                          e.currentTarget.style.borderColor = 'rgba(197,110,74,0.1)'
+                          const fromIdx = parseInt(e.dataTransfer.getData('text/plain'))
+                          const toIdx = idx
+                          if (fromIdx === toIdx) return
+                          const newList = [...artworks]
+                          const [moved] = newList.splice(fromIdx, 1)
+                          newList.splice(toIdx, 0, moved)
+                          // Met à jour sort_order
+                          const updated = newList.map((item, i) => ({ ...item, sort_order: i }))
+                          setArtworks(updated)
+                          // Sauvegarde en base
+                          Promise.all(updated.map(item =>
+                            fetch(`/api/artworks/${item.id}`, {
+                              method: 'PATCH',
+                              headers: authHeaders(),
+                              body: JSON.stringify({ sort_order: item.sort_order })
+                            })
+                          )).then(() => showToast('Ordre sauvegardé !'))
+                        }}
+                        style={{
+                          display:'flex', alignItems:'center', gap:20,
+                          padding:'14px 20px', background:'var(--light)',
+                          border:'1px solid rgba(197,110,74,0.1)',
+                          cursor:'grab', transition:'border-color 0.2s',
+                          userSelect:'none'
+                        }}
+                      >
+                        {/* Poignée drag */}
+                        <span style={{fontSize:18, opacity:0.3, flexShrink:0, cursor:'grab'}}>⠿</span>
+
+                        <div style={{width:48, height:48, flexShrink:0, overflow:'hidden', background:'var(--cream)', position:'relative'}}>
+                          {a.image_url
+                            ? <Image src={a.image_url} alt={a.title} fill style={{objectFit:'cover'}} unoptimized/>
+                            : <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>🖼️</div>
+                          }
+                        </div>
+
+                        <div style={{flex:1, minWidth:0}}>
+                          <div style={{fontFamily:"'Cormorant Garant', serif", fontSize:17, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{a.title}</div>
+                          <div style={{fontSize:11, color:'var(--stone)', marginTop:2}}>{a.category} · {a.year} · {a.availability}</div>
+                        </div>
+
+                        <div style={{display:'flex', gap:8, flexShrink:0}}>
+                          <button onClick={() => handleEdit(a)} style={iconBtnStyle}>Modifier</button>
+                          <button onClick={() => handleDelete(a)} style={{...iconBtnStyle, color:'var(--red)'}}>Supprimer</button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div style={{flex:1}}>
-                    <div style={{fontFamily:"'Cormorant Garant', serif", fontSize:18}}>{a.title}</div>
-                    <div style={{fontSize:12, color:'var(--stone)', marginTop:2}}>{a.category} · {a.year} · {a.availability}</div>
-                  </div>
-                  <div style={{display:'flex', gap:8}}>
-                    <button onClick={() => handleEdit(a)} style={iconBtnStyle}>Modifier</button>
-                    <button onClick={() => handleDelete(a)} style={{...iconBtnStyle, color:'var(--red)'}}>Supprimer</button>
-                  </div>
-                </div>
-              ))
+                </>
             }
           </div>
         )}
@@ -251,6 +301,47 @@ export default function AdminPage() {
               <FormField label="Titre ligne 2 (italique)"><input value={settings.aboutLine2} onChange={e=>setSettings(s=>({...s,aboutLine2:e.target.value}))} style={inputStyle}/></FormField>
             </div>
             <FormField label="Texte de présentation"><textarea value={settings.aboutText} onChange={e=>setSettings(s=>({...s,aboutText:e.target.value}))} rows={5} style={{...inputStyle,resize:'vertical'}}/></FormField>
+
+            <hr style={{border:'none', borderTop:'1px solid rgba(197,110,74,0.2)', margin:'8px 0'}}/>
+            <SectionTitle>Page "À propos"</SectionTitle>
+            <div style={rowStyle}>
+              <FormField label="Nom / Titre">
+                <input value={settings.aboutPageTitle} onChange={e=>setSettings(s=>({...s,aboutPageTitle:e.target.value}))} style={inputStyle} placeholder="Clara"/>
+              </FormField>
+              <FormField label="Sous-titre">
+                <input value={settings.aboutPageSubtitle} onChange={e=>setSettings(s=>({...s,aboutPageSubtitle:e.target.value}))} style={inputStyle} placeholder="Infirmière & Artiste"/>
+              </FormField>
+            </div>
+            <FormField label="Introduction">
+              <textarea value={settings.aboutPageIntro} onChange={e=>setSettings(s=>({...s,aboutPageIntro:e.target.value}))} rows={4} style={{...inputStyle,resize:'vertical'}}/>
+            </FormField>
+            <FormField label="Démarche artistique">
+              <textarea value={settings.aboutPageDemarche} onChange={e=>setSettings(s=>({...s,aboutPageDemarche:e.target.value}))} rows={4} style={{...inputStyle,resize:'vertical'}}/>
+            </FormField>
+            <FormField label='Citation (ex: "Mon art vous fait voyager…")'>
+              <input value={settings.aboutPageCitation} onChange={e=>setSettings(s=>({...s,aboutPageCitation:e.target.value}))} style={inputStyle}/>
+            </FormField>
+            <FormField label="Photo de l'artiste">
+              <div style={{border:'2px dashed rgba(197,110,74,0.25)', padding:24, textAlign:'center', position:'relative', background:'var(--light)', cursor:'pointer'}}>
+                <input type="file" accept="image/*" onChange={async e => {
+                  const file = e.target.files[0]
+                  if (!file) return
+                  const fd = new FormData()
+                  fd.append('file', file)
+                  const token = sessionStorage.getItem('calar_admin')
+                  const res = await fetch('/api/upload', { method:'POST', headers:{ Authorization:`Bearer ${token}` }, body: fd })
+                  if (res.ok) {
+                    const { url } = await res.json()
+                    setSettings(s => ({...s, aboutPagePhoto: url}))
+                    showToast('Photo uploadée !')
+                  }
+                }} style={{position:'absolute', inset:0, opacity:0, cursor:'pointer', width:'100%', height:'100%'}}/>
+                {settings.aboutPagePhoto
+                  ? <img src={settings.aboutPagePhoto} alt="Photo" style={{maxHeight:160, objectFit:'contain', margin:'0 auto', display:'block', borderRadius:2}}/>
+                  : <div style={{opacity:0.4}}><div style={{fontSize:32, marginBottom:8}}>📷</div><div style={{fontSize:13, color:'var(--stone)'}}>Cliquez pour uploader une photo</div></div>
+                }
+              </div>
+            </FormField>
 
             <hr style={{border:'none', borderTop:'1px solid rgba(197,110,74,0.2)', margin:'8px 0'}}/>
             <SectionTitle>Œuvre à la une</SectionTitle>
