@@ -10,6 +10,7 @@ export default function GaleriePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    document.title = 'La Galerie · Calar.Artiste'
     // Chargement initial
     const load = async () => {
       const { data } = await supabase
