@@ -1,6 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+
+// Titre dynamique pour la page À propos
+const PAGE_TITLE = 'À propos · Calar.Artiste'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Footer from '@/components/Footer'
@@ -19,6 +22,7 @@ export default function AProposPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    document.title = PAGE_TITLE
     supabase.from('settings').select('key, value')
       .then(({ data }) => {
         if (data) {
