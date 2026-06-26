@@ -161,45 +161,39 @@ export default function OeuvrePage() {
             onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
           >✕</button>
 
-          {/* Légende */}
-          <div style={{
-            position:'absolute', bottom:24, left:'50%',
-            transform:'translateX(-50%)',
-            textAlign:'center'
-          }}>
-            <p style={{
-              fontFamily:"'Cormorant Garant', serif",
-              fontSize:18, fontWeight:300, color:'rgba(255,255,255,0.8)',
-              letterSpacing:'0.04em'
-            }}>
-              {artwork.title}
-              {artwork.year && <span style={{color:'var(--gold)', marginLeft:12}}>· {artwork.year}</span>}
-            </p>
-            {artwork.technique && (
-              <p style={{fontSize:11, color:'rgba(255,255,255,0.4)', letterSpacing:'0.1em', textTransform:'uppercase', marginTop:6}}>
-                {artwork.technique}{artwork.dimensions && ` · ${artwork.dimensions}`}
-              </p>
-            )}
-          </div>
-
-          {/* Image */}
+          {/* Image + légende en dessous */}
           <div
             onClick={e => e.stopPropagation()}
             style={{
-              position:'relative',
-              maxWidth:'90vw', maxHeight:'85vh',
-              width:'auto', height:'auto'
+              display:'flex', flexDirection:'column', alignItems:'center',
+              maxWidth:'90vw', maxHeight:'90vh'
             }}
           >
             <img
               src={artwork.image_url}
               alt={artwork.title}
               style={{
-                maxWidth:'90vw', maxHeight:'85vh',
+                maxWidth:'90vw', maxHeight:'75vh',
                 objectFit:'contain', display:'block',
                 boxShadow:'0 40px 80px rgba(0,0,0,0.5)'
               }}
             />
+            {/* Légende sous l'image */}
+            <div style={{marginTop:20, textAlign:'center'}}>
+              <p style={{
+                fontFamily:"'Cormorant Garant', serif",
+                fontSize:20, fontWeight:300, color:'rgba(255,255,255,0.9)',
+                letterSpacing:'0.04em'
+              }}>
+                {artwork.title}
+                {artwork.year && <span style={{color:'var(--gold)', marginLeft:12}}>· {artwork.year}</span>}
+              </p>
+              {artwork.technique && (
+                <p style={{fontSize:11, color:'rgba(255,255,255,0.45)', letterSpacing:'0.1em', textTransform:'uppercase', marginTop:6}}>
+                  {artwork.technique}{artwork.dimensions && ` · ${artwork.dimensions}`}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       )}
