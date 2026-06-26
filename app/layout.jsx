@@ -6,11 +6,11 @@ const BASE_URL = 'https://calartiste.vercel.app'
 export const metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'Calar.Artiste — Art intuitif & abstrait',
-    template: '%s · Calar.Artiste'
+    default: 'Calar.Artiste — Peintures originales, art intuitif & abstrait | Clara artiste',
+    template: '%s | Calar.Artiste — Art intuitif & abstrait'
   },
-  description: 'Découvrez les œuvres originales de Clara, infirmière et artiste. Art intuitif et abstrait qui voyage entre émotion, nature et guérison. Acrylique, pointillisme, techniques mixtes.',
-  keywords: ['art intuitif', 'art abstrait', 'peinture originale', 'Calar artiste', 'Clara artiste', 'acrylique', 'pointillisme', 'œuvres originales', 'galerie art'],
+  description: 'Découvrez la galerie de Clara, artiste peintre autodidacte. Œuvres originales uniques en art intuitif et abstrait : acrylique, pointillisme, techniques mixtes. Voyagez entre émotion, nature et émotions à travers ses toiles colorées.',
+  keywords: ['art intuitif', 'art abstrait', 'peinture originale', 'Calar artiste', 'Clara artiste peintre', 'acrylique sur toile', 'pointillisme', 'œuvres originales à vendre', 'galerie art en ligne', 'peinture abstraite colorée', 'artiste française'],
   authors: [{ name: 'Clara — Calar.Artiste' }],
   creator: 'Calar.Artiste',
   publisher: 'Calar.Artiste',
@@ -24,14 +24,14 @@ export const metadata = {
     locale: 'fr_FR',
     url: BASE_URL,
     siteName: 'Calar.Artiste',
-    title: 'Calar.Artiste — Art intuitif & abstrait',
-    description: 'Œuvres originales de Clara — art intuitif et abstrait entre émotion, nature et guérison.',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Calar.Artiste — Galerie' }]
+    title: 'Calar.Artiste — Peintures originales, art intuitif & abstrait',
+    description: 'Galerie en ligne de Clara, artiste peintre. Œuvres originales uniques en art intuitif et abstrait — acrylique, pointillisme, techniques mixtes. Entre émotion, nature et émotions.',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Calar.Artiste — Galerie de peintures originales' }]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Calar.Artiste — Art intuitif & abstrait',
-    description: 'Œuvres originales de Clara — art intuitif et abstrait entre émotion, nature et guérison.',
+    title: 'Calar.Artiste — Peintures originales, art intuitif & abstrait',
+    description: 'Galerie en ligne de Clara, artiste peintre. Œuvres originales uniques en art intuitif et abstrait — acrylique, pointillisme, techniques mixtes.',
     images: ['/og-image.jpg'],
     creator: '@calar.artiste'
   },
@@ -55,15 +55,25 @@ export default function RootLayout({ children }) {
             '@context': 'https://schema.org',
             '@type': 'ArtGallery',
             name: 'Calar.Artiste',
-            description: 'Galerie d\'art en ligne de Clara, artiste peintre spécialisée en art intuitif et abstrait.',
+            description: 'Galerie d\'art en ligne de Clara, artiste peintre autodidacte spécialisée en art intuitif et abstrait. Œuvres originales uniques en acrylique, pointillisme et techniques mixtes.',
             url: BASE_URL,
             sameAs: ['https://www.instagram.com/calar.artiste'],
+            inLanguage: 'fr-FR',
+            image: `${BASE_URL}/og-image.jpg`,
+            priceRange: '€€',
+            hasOfferCatalog: {
+              '@type': 'OfferCatalog',
+              name: 'Peintures originales',
+              description: 'Œuvres originales uniques en art intuitif et abstrait'
+            },
             artist: {
               '@type': 'Person',
               name: 'Clara',
               alternateName: 'Calar.Artiste',
               jobTitle: 'Artiste peintre',
-              sameAs: ['https://www.instagram.com/calar.artiste']
+              description: 'Infirmière et artiste peintre autodidacte, spécialisée en art intuitif et abstrait. Son travail puise dans les émotions et la beauté de la nature.',
+              sameAs: ['https://www.instagram.com/calar.artiste'],
+              knowsAbout: ['Art intuitif', 'Art abstrait', 'Acrylique', 'Pointillisme', 'Techniques mixtes']
             }
           })}}
         />
