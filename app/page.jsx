@@ -1,6 +1,5 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import Image from 'next/image'
 import ArtworkCard from '@/components/ArtworkCard'
 
 export const metadata = {
@@ -46,52 +45,37 @@ export const dynamic = 'force-dynamic'
 export default async function HomePage() {
   const { artworks, settings } = await getHomeData()
 
-  const featured = settings.featuredId
-    ? artworks.find(a => String(a.id) === String(settings.featuredId)) || artworks[0]
-    : artworks[0]
-
-  // Œuvres récentes — manuelles si définies, sinon automatique
   const recentIds = [settings.recentId1, settings.recentId2, settings.recentId3].filter(Boolean)
   const recent = recentIds.length > 0
     ? recentIds.map(id => artworks.find(a => String(a.id) === String(id))).filter(Boolean)
-    : artworks.filter(a => !featured || a.id !== featured?.id).slice(0, 3)
+    : artworks.slice(0, 3)
 
   return (
     <>
-      {/* HERO */}
-      <section style={{display:'grid', gridTemplateColumns:'1fr 1fr', minHeight:'calc(100vh - 80px)', paddingTop:80}}>
-        <div style={{display:'flex', flexDirection:'column', justifyContent:'center', padding:'80px 64px 80px 48px'}}>
-          <p style={{fontSize:11, fontWeight:500, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--blue)', marginBottom:24}}>
-            {settings.heroEyebrow}
-          </p>
-          <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(52px, 6vw, 80px)', fontWeight:300, lineHeight:1.08, marginBottom:28}}>
-            {settings.heroLine1}<br/>
-            <em style={{fontStyle:'italic', color:'var(--gold)'}}>{settings.heroLine2}</em>
-          </h1>
-          <p style={{fontSize:15, color:'var(--stone)', lineHeight:1.8, maxWidth:380, marginBottom:48}}>
-            {settings.heroDesc}
-          </p>
-          <Link href="/galerie" style={{
-            display:'inline-block', padding:'14px 36px',
-            background:'var(--gold)', color:'#e9e5da',
-            fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase'
-          }}>
-            {settings.heroBtn}
-          </Link>
-        </div>
-
-        <div style={{position:'relative', background:'var(--cream)', display:'flex', alignItems:'center', justifyContent:'center'}}>
-          {featured?.image_url ? (
-            <div style={{position:'relative', width:'100%', height:'100%', minHeight:600}}>
-              <Image src={featured.image_url} alt={featured.title} fill style={{objectFit:'cover'}} />
-            </div>
-          ) : (
-            <div style={{display:'flex', flexDirection:'column', alignItems:'center', gap:12, opacity:0.4}}>
-              <span style={{fontSize:48}}>🎨</span>
-              <span style={{fontSize:12, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>Œuvre à la une</span>
-            </div>
-          )}
-        </div>
+      {/* HERO — texte centré uniquement */}
+      <section style={{
+        paddingTop:80,
+        display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+        textAlign:'center', padding:'120px 48px 80px',
+        background:'var(--cream)'
+      }}>
+        <p style={{fontSize:11, fontWeight:500, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--blue)', marginBottom:20}}>
+          {settings.heroEyebrow}
+        </p>
+        <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(48px, 7vw, 88px)', fontWeight:300, lineHeight:1.08, marginBottom:24, maxWidth:800}}>
+          {settings.heroLine1}<br/>
+          <em style={{fontStyle:'italic', color:'var(--gold)'}}>{settings.heroLine2}</em>
+        </h1>
+        <p style={{fontSize:16, color:'var(--stone)', lineHeight:1.85, maxWidth:520, marginBottom:44}}>
+          {settings.heroDesc}
+        </p>
+        <Link href="/galerie" style={{
+          display:'inline-block', padding:'14px 40px',
+          background:'var(--gold)', color:'#e9e5da',
+          fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase'
+        }}>
+          {settings.heroBtn}
+        </Link>
       </section>
 
       {/* RECENT WORKS */}
