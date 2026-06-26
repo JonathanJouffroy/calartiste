@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
 // Titre dynamique pour la page À propos
-const PAGE_TITLE = 'À propos · Calar.Artiste'
+const PAGE_TITLE = 'Clara — À propos · Calar.Artiste'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Footer from '@/components/Footer'
@@ -11,9 +11,9 @@ import Footer from '@/components/Footer'
 const DEFAULTS = {
   aboutPageTitle:      'Clara',
   aboutPageSubtitle:   'Infirmière & Artiste',
-  aboutPageIntro:      "Clara est infirmière le jour, artiste en permanence. Son art intuitif et abstrait puise dans les émotions du soin, la beauté de la nature et le chemin vers la guérison.",
+  aboutPageIntro:      "Clara est une artiste passionnée. Son art intuitif et abstrait puise dans les émotions et la beauté de la nature.",
   aboutPageDemarche:   "Chaque toile naît d'une émotion, d'un moment suspendu, d'une couleur aperçue dans la lumière du matin. Ses œuvres aux formes organiques et aux couleurs vives sont une invitation à ressentir, à lâcher prise, à se reconnecter à l'essentiel.",
-  aboutPageCitation:   "\"Mon art vous fait voyager entre émotion, nature et guérison.\"",
+  aboutPageCitation:   "\"Mon art vous fait voyager entre émotion, nature et émotions.\"",
   aboutPagePhoto:      '',
 }
 
