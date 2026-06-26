@@ -3,6 +3,16 @@ import Link from 'next/link'
 import Image from 'next/image'
 import ArtworkCard from '@/components/ArtworkCard'
 
+export const metadata = {
+  title: 'Calar.Artiste — Art intuitif & abstrait',
+  description: 'Découvrez les œuvres originales de Clara, infirmière et artiste. Art intuitif et abstrait entre émotion, nature et guérison.',
+  openGraph: {
+    title: 'Calar.Artiste — Art intuitif & abstrait',
+    description: 'Œuvres originales de Clara — art intuitif et abstrait entre émotion, nature et guérison.',
+    url: 'https://calartiste.vercel.app',
+  }
+}
+
 async function getHomeData() {
   const [{ data: artworks }, { data: settings }] = await Promise.all([
     supabase.from('artworks').select('*').order('sort_order').order('created_at'),
