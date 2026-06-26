@@ -11,6 +11,7 @@ export default function OeuvrePage() {
   const router = useRouter()
   const [artwork, setArtwork] = useState(null)
   const [contactOpen, setContactOpen] = useState(false)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
 
   useEffect(() => {
     supabase.from('artworks').select('*').eq('id', id).single()
@@ -19,6 +20,19 @@ export default function OeuvrePage() {
         else setArtwork(data)
       })
   }, [id])
+
+  // Ferme la lightbox avec Escape
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') setLightboxOpen(false) }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
+
+  // Bloque le scroll quand lightbox ouverte
+  useEffect(() => {
+    document.body.style.overflow = lightboxOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [lightboxOpen])
 
   if (!artwork) return (
     <div style={{paddingTop:120, textAlign:'center', color:'var(--stone)'}}>Chargement…</div>
@@ -29,7 +43,7 @@ export default function OeuvrePage() {
   return (
     <>
       <div style={{paddingTop:80}}>
-        <button onClick={() => router.back()} style={{
+        <button onClick={() => router.push('/galerie')} style={{
           margin:'28px 48px 0', fontSize:11, fontWeight:500, letterSpacing:'0.1em',
           textTransform:'uppercase', color:'var(--stone)', background:'none', border:'none',
           cursor:'pointer', display:'flex', alignItems:'center', gap:8
@@ -39,13 +53,37 @@ export default function OeuvrePage() {
           display:'grid', gridTemplateColumns:'1.1fr 1fr', gap:80,
           padding:'48px 48px 80px', alignItems:'start'
         }}>
-          {/* Image */}
+          {/* Image — cliquable pour lightbox */}
           <div style={{position:'sticky', top:100}}>
-            <div style={{position:'relative', aspectRatio:'3/4', background:'var(--light)', overflow:'hidden'}}>
+            <div
+              onClick={() => artwork.image_url && setLightboxOpen(true)}
+              style={{
+                position:'relative', aspectRatio:'3/4', background:'var(--light)',
+                overflow:'hidden', cursor: artwork.image_url ? 'zoom-in' : 'default'
+              }}
+            >
               {artwork.image_url
-                ? <Image src={artwork.image_url} alt={artwork.title} fill style={{objectFit:'cover'}} sizes="50vw"/>
+                ? <Image
+                    src={artwork.image_url}
+                    alt={artwork.title}
+                    fill
+                    style={{objectFit:'cover'}}
+                    sizes="50vw"
+                    unoptimized
+                  />
                 : <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:64,opacity:0.15}}>🖼️</div>
               }
+              {artwork.image_url && (
+                <div style={{
+                  position:'absolute', bottom:12, right:12,
+                  background:'rgba(42,37,32,0.6)', color:'#fff',
+                  fontSize:10, fontWeight:500, letterSpacing:'0.1em',
+                  textTransform:'uppercase', padding:'6px 10px',
+                  backdropFilter:'blur(4px)'
+                }}>
+                  🔍 Agrandir
+                </div>
+              )}
             </div>
           </div>
 
@@ -68,7 +106,7 @@ export default function OeuvrePage() {
                 ['Dimensions', artwork.dimensions],
                 ['Disponibilité', artwork.availability]
               ].map(([label, val]) => val && (
-                <div key={label} style={{display:'flex', justifyContent:'space-between', borderBottom:'1px solid rgba(255,255,255,0.05)', paddingBottom:12}}>
+                <div key={label} style={{display:'flex', justifyContent:'space-between', borderBottom:'1px solid rgba(197,110,74,0.1)', paddingBottom:12}}>
                   <span style={{fontSize:11, textTransform:'uppercase', letterSpacing:'0.1em', color:'var(--stone)'}}>{label}</span>
                   <span style={{fontSize:14, fontWeight:500}}>{val}</span>
                 </div>
@@ -99,9 +137,92 @@ export default function OeuvrePage() {
 
       <Footer />
 
+      {/* LIGHTBOX */}
+      {lightboxOpen && (
+        <div
+          onClick={() => setLightboxOpen(false)}
+          style={{
+            position:'fixed', inset:0, zIndex:300,
+            background:'rgba(10,7,3,0.95)',
+            display:'flex', alignItems:'center', justifyContent:'center',
+            padding:24, cursor:'zoom-out'
+          }}
+        >
+          {/* Bouton fermer */}
+          <button
+            onClick={() => setLightboxOpen(false)}
+            style={{
+              position:'absolute', top:20, right:24,
+              background:'none', border:'none', color:'rgba(255,255,255,0.7)',
+              fontSize:28, cursor:'pointer', lineHeight:1,
+              transition:'color 0.2s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
+          >✕</button>
+
+          {/* Légende */}
+          <div style={{
+            position:'absolute', bottom:24, left:'50%',
+            transform:'translateX(-50%)',
+            textAlign:'center'
+          }}>
+            <p style={{
+              fontFamily:"'Cormorant Garant', serif",
+              fontSize:18, fontWeight:300, color:'rgba(255,255,255,0.8)',
+              letterSpacing:'0.04em'
+            }}>
+              {artwork.title}
+              {artwork.year && <span style={{color:'var(--gold)', marginLeft:12}}>· {artwork.year}</span>}
+            </p>
+            {artwork.technique && (
+              <p style={{fontSize:11, color:'rgba(255,255,255,0.4)', letterSpacing:'0.1em', textTransform:'uppercase', marginTop:6}}>
+                {artwork.technique}{artwork.dimensions && ` · ${artwork.dimensions}`}
+              </p>
+            )}
+          </div>
+
+          {/* Image */}
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              position:'relative',
+              maxWidth:'90vw', maxHeight:'85vh',
+              width:'auto', height:'auto'
+            }}
+          >
+            <img
+              src={artwork.image_url}
+              alt={artwork.title}
+              style={{
+                maxWidth:'90vw', maxHeight:'85vh',
+                objectFit:'contain', display:'block',
+                boxShadow:'0 40px 80px rgba(0,0,0,0.5)'
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       {contactOpen && (
         <ContactModal artwork={artwork} onClose={() => setContactOpen(false)} />
       )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          div[style*="grid-template-columns: 1.1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+            padding: 20px !important;
+            gap: 32px !important;
+          }
+          div[style*="position: sticky"] {
+            position: static !important;
+          }
+          button[style*="margin: 28px 48px"] {
+            margin: 20px 20px 0 !important;
+          }
+        }
+      `}</style>
     </>
   )
 }
