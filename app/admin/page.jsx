@@ -37,6 +37,7 @@ export default function AdminPage() {
   const [uploadError, setUploadError] = useState('')
   const [saving, setSaving] = useState(false)
   const fileRef = useRef()
+  const photoRef = useRef()
 
   // Auth check
   useEffect(() => {
@@ -190,9 +191,17 @@ export default function AdminPage() {
             </div>
 
             <FormField label="Image">
-              <div style={{border:'2px dashed rgba(197,110,74,0.25)', padding:32, textAlign:'center', position:'relative', background:'var(--light)', cursor:'pointer'}}>
-                <input ref={fileRef} type="file" accept="image/*" onChange={handleImageChange}
-                  style={{position:'absolute', inset:0, opacity:0, cursor:'pointer', width:'100%', height:'100%'}}/>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{display:'none'}}
+              />
+              <div
+                onClick={() => fileRef.current?.click()}
+                style={{border:'2px dashed rgba(197,110,74,0.25)', padding:32, textAlign:'center', background:'var(--light)', cursor:'pointer'}}
+              >
                 <div style={{fontSize:28, marginBottom:8, opacity:0.4}}>🖼️</div>
                 <div style={{fontSize:13, color:'var(--stone)'}}>Cliquez ou glissez une image<br/><small>JPG, WEBP · max 2 Mo · idéal 1200×1600px</small></div>
                 {imagePreview && <img src={imagePreview} alt="preview" style={{maxHeight:180, objectFit:'contain', margin:'12px auto 0', display:'block'}}/>}
@@ -322,8 +331,12 @@ export default function AdminPage() {
               <input value={settings.aboutPageCitation} onChange={e=>setSettings(s=>({...s,aboutPageCitation:e.target.value}))} style={inputStyle}/>
             </FormField>
             <FormField label="Photo de l'artiste">
-              <div style={{border:'2px dashed rgba(197,110,74,0.25)', padding:24, textAlign:'center', position:'relative', background:'var(--light)', cursor:'pointer'}}>
-                <input type="file" accept="image/*" onChange={async e => {
+              <input
+                type="file"
+                accept="image/*"
+                ref={photoRef}
+                style={{display:'none'}}
+                onChange={async e => {
                   const file = e.target.files[0]
                   if (!file) return
                   const fd = new FormData()
@@ -334,8 +347,15 @@ export default function AdminPage() {
                     const { url } = await res.json()
                     setSettings(s => ({...s, aboutPagePhoto: url}))
                     showToast('Photo uploadée !')
+                  } else {
+                    showToast('Erreur lors de l\'upload.')
                   }
-                }} style={{position:'absolute', inset:0, opacity:0, cursor:'pointer', width:'100%', height:'100%'}}/>
+                }}
+              />
+              <div
+                onClick={() => photoRef.current?.click()}
+                style={{border:'2px dashed rgba(197,110,74,0.25)', padding:24, textAlign:'center', background:'var(--light)', cursor:'pointer'}}
+              >
                 {settings.aboutPagePhoto
                   ? <img src={settings.aboutPagePhoto} alt="Photo" style={{maxHeight:160, objectFit:'contain', margin:'0 auto', display:'block', borderRadius:2}}/>
                   : <div style={{opacity:0.4}}><div style={{fontSize:32, marginBottom:8}}>📷</div><div style={{fontSize:13, color:'var(--stone)'}}>Cliquez pour uploader une photo</div></div>
