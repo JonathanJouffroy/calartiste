@@ -10,7 +10,7 @@ export default function GaleriePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    document.title = 'La Galerie · Calar.Artiste'
+    document.title = 'Galerie — Peintures originales à vendre | Art intuitif & abstrait · Calar.Artiste'
     // Chargement initial
     const load = async () => {
       const { data } = await supabase
