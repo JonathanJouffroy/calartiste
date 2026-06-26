@@ -364,15 +364,6 @@ export default function AdminPage() {
             </FormField>
 
             <hr style={{border:'none', borderTop:'1px solid rgba(197,110,74,0.2)', margin:'8px 0'}}/>
-            <SectionTitle>Œuvre à la une</SectionTitle>
-            <FormField label="Choisir l'œuvre">
-              <select value={settings.featuredId} onChange={e=>setSettings(s=>({...s,featuredId:e.target.value}))} style={inputStyle}>
-                <option value="">— Première œuvre (par défaut) —</option>
-                {artworks.map(a => <option key={a.id} value={a.id}>{a.title} ({a.year})</option>)}
-              </select>
-            </FormField>
-
-            <hr style={{border:'none', borderTop:'1px solid rgba(197,110,74,0.2)', margin:'8px 0'}}/>
             <SectionTitle>Œuvres récentes</SectionTitle>
             <p style={{fontSize:12, color:'var(--stone)', marginTop:-12}}>Choisissez les 3 œuvres affichées dans la section "Œuvres récentes" de la home. Par défaut, les 3 dernières ajoutées.</p>
             {[['recentId1','Œuvre récente 1'],['recentId2','Œuvre récente 2'],['recentId3','Œuvre récente 3']].map(([key, label]) => (
