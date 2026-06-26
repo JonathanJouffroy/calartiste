@@ -49,6 +49,7 @@ export default function Nav() {
           {[
             { href:'/', label:'Accueil' },
             { href:'/galerie', label:'Galerie' },
+            { href:'/a-propos', label:'À propos' },
           ].map(({href, label}) => (
             <li key={href}>
               <Link href={href} style={{
@@ -80,6 +81,7 @@ export default function Nav() {
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
         <Link href="/" onClick={close} className={pathname==='/'?'active':''}>Accueil</Link>
         <Link href="/galerie" onClick={close} className={pathname==='/galerie'?'active':''}>Galerie</Link>
+        <Link href="/a-propos" onClick={close} className={pathname==='/a-propos'?'active':''}>À propos</Link>
         {isAdmin && <>
           <Link href="/admin" onClick={close}>Admin</Link>
           <button onClick={logout} className="mobile-logout">Déconnexion</button>
