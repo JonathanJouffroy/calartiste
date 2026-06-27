@@ -180,6 +180,30 @@ export default function GaleriePage() {
           }
         </div>
       </div>
+
+      {/* BANNIÈRE COMMANDE PERSONNALISÉE */}
+      <div style={{
+        background:'var(--light)', borderTop:'1px solid rgba(197,110,74,0.2)',
+        borderBottom:'1px solid rgba(197,110,74,0.2)',
+        padding:'40px 48px',
+        display:'flex', alignItems:'center', justifyContent:'space-between', gap:24, flexWrap:'wrap'
+      }}>
+        <div>
+          <p style={{fontFamily:"'Cormorant Garant', serif", fontSize:24, fontWeight:300, color:'var(--black)', marginBottom:6}}>
+            Vous souhaitez une œuvre <em style={{fontStyle:'italic', color:'var(--gold)'}}>unique & personnalisée ?</em>
+          </p>
+          <p style={{fontSize:13, color:'var(--stone)'}}>
+            Clara crée sur commande — couleurs, format et thème selon vos envies.
+          </p>
+        </div>
+        <a href="/a-propos#contact" style={{
+          display:'inline-block', padding:'12px 32px', flexShrink:0,
+          background:'var(--gold)', color:'var(--cream)',
+          fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase',
+          textDecoration:'none'
+        }}>Faire une demande</a>
+      </div>
+
       <Footer />
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
