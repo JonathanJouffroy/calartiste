@@ -8,13 +8,17 @@ const DEFAULT_SETTINGS = {
   heroDesc: 'Entre émotion, nature et guérison — chaque toile de Clara est un voyage intérieur peint avec sincérité et énergie.',
   heroBtn: 'Voir les œuvres', heroEyebrow: 'Art intuitif & abstrait',
   aboutLine1: 'Infirmière', aboutLine2: 'artiste',
-  aboutText: "Clara est infirmière le jour, artiste en permanence. Son art intuitif et abstrait puise dans les émotions du soin, la beauté de la nature et le chemin vers la guérison.",
+  aboutText: "Clara est artiste, passionnée et créative.",
   featuredId: '', recentId1: '', recentId2: '', recentId3: '',
-  aboutPageTitle: 'Clara', aboutPageSubtitle: 'Infirmière & Artiste',
-  aboutPageIntro: "Clara est infirmière le jour, artiste en permanence.",
+  aboutPageTitle: 'Clara', aboutPageSubtitle: 'Artiste',
+  aboutPageIntro: "Clara est une artiste passionnée. Son art intuitif et abstrait puise dans les émotions et la beauté de la nature.",
   aboutPageDemarche: "Chaque toile naît d'une émotion, d'un moment suspendu.",
-  aboutPageCitation: '"Mon art vous fait voyager entre émotion, nature et guérison."',
+  aboutPageCitation: '"Mon art vous fait voyager entre émotion et nature."',
   aboutPagePhoto: '',
+  commandeTitle: 'Une œuvre unique,',
+  commandeTitleItalic: 'rien que pour vous',
+  commandeDesc: "Clara réalise des œuvres personnalisées selon vos envies : couleurs, dimensions, thème, émotion… Chaque commande est une collaboration unique entre l'artiste et vous.",
+  commandeBtn: 'Faire une demande',
 }
 
 function authHeaders() {
@@ -504,6 +508,23 @@ export default function AdminPage() {
                   </select>
                 </Field>
               ))}
+            </Section>
+
+            <Section title="🎨 Section Commande personnalisée (home)">
+              <Row>
+                <Field label="Titre ligne 1">
+                  <input value={settings.commandeTitle} onChange={e=>setSettings(s=>({...s,commandeTitle:e.target.value}))} style={inputStyle} placeholder="Une œuvre unique,"/>
+                </Field>
+                <Field label="Titre ligne 2 (italique doré)">
+                  <input value={settings.commandeTitleItalic} onChange={e=>setSettings(s=>({...s,commandeTitleItalic:e.target.value}))} style={inputStyle} placeholder="rien que pour vous"/>
+                </Field>
+              </Row>
+              <Field label="Description">
+                <textarea value={settings.commandeDesc} onChange={e=>setSettings(s=>({...s,commandeDesc:e.target.value}))} rows={3} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
+              </Field>
+              <Field label="Texte du bouton">
+                <input value={settings.commandeBtn} onChange={e=>setSettings(s=>({...s,commandeBtn:e.target.value}))} style={inputStyle} placeholder="Faire une demande"/>
+              </Field>
             </Section>
 
             <Section title="📄 Page À propos">
