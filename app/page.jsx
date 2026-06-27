@@ -3,11 +3,11 @@ import Link from 'next/link'
 import ArtworkCard from '@/components/ArtworkCard'
 
 export const metadata = {
-  title: 'Calar.Artiste — Art intuitif & abstrait',
-  description: 'Découvrez les œuvres originales de Clara, infirmière et artiste. Art intuitif et abstrait entre émotion, nature et guérison.',
+  title: 'Calar.Artiste — Peintures originales, art intuitif & abstrait | Clara artiste peintre',
+  description: 'Bienvenue dans la galerie de Clara, artiste peintre. Découvrez ses œuvres originales uniques : peintures intuitives et abstraites aux couleurs vives, inspirées de la nature et des émotions. Acrylique, pointillisme, techniques mixtes.',
   openGraph: {
-    title: 'Calar.Artiste — Art intuitif & abstrait',
-    description: 'Œuvres originales de Clara — art intuitif et abstrait entre émotion, nature et guérison.',
+    title: 'Calar.Artiste — Peintures originales, art intuitif & abstrait',
+    description: 'Galerie en ligne de Clara, artiste peintre. Œuvres originales en art intuitif et abstrait — acrylique, pointillisme, techniques mixtes. Entre émotion, nature et émotions.',
     url: 'https://calartiste.vercel.app',
   }
 }
@@ -26,12 +26,12 @@ async function getHomeData() {
     settings: {
       heroLine1:   s.heroLine1   || "L'art qui fait",
       heroLine2:   s.heroLine2   || 'voyager',
-      heroDesc:    s.heroDesc    || 'Entre émotion, nature et guérison — chaque toile de Clara est un voyage intérieur peint avec sincérité et énergie.',
+      heroDesc:    s.heroDesc    || 'Entre émotion, nature et émotions — chaque toile de Clara est un voyage intérieur peint avec sincérité et énergie.',
       heroBtn:     s.heroBtn     || 'Voir les œuvres',
       heroEyebrow: s.heroEyebrow || 'Art intuitif & abstrait',
       aboutLine1:  s.aboutLine1  || 'Infirmière',
       aboutLine2:  s.aboutLine2  || 'artiste',
-      aboutText:   s.aboutText   || "Clara est infirmière le jour, artiste en permanence.",
+      aboutText:   s.aboutText   || "Clara est artiste, passionnée et créative.",
       featuredId:  s.featuredId  || null,
       recentId1:   s.recentId1   || null,
       recentId2:   s.recentId2   || null,
@@ -66,7 +66,7 @@ export default async function HomePage() {
           {settings.heroLine1}<br/>
           <em style={{fontStyle:'italic', color:'var(--gold)'}}>{settings.heroLine2}</em>
         </h1>
-        <p style={{fontSize:16, color:'var(--stone)', lineHeight:1.85, maxWidth:520, marginBottom:44}}>
+        <p style={{fontSize:16, color:'var(--stone)', lineHeight:1.85, maxWidth:520, marginBottom:44, whiteSpace:'pre-wrap'}}>
           {settings.heroDesc}
         </p>
         <Link href="/galerie" style={{
@@ -99,7 +99,7 @@ export default async function HomePage() {
         <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:44, fontWeight:300, lineHeight:1.1}}>
           {settings.aboutLine1}<br/>& <em style={{fontStyle:'italic', color:'var(--gold)'}}>{settings.aboutLine2}</em>
         </h2>
-        <p style={{fontSize:15, lineHeight:1.8, color:'var(--stone)'}}>
+        <p style={{fontSize:15, lineHeight:1.8, color:'var(--stone)', whiteSpace:'pre-wrap'}}>
           {settings.aboutText}
         </p>
       </section>
