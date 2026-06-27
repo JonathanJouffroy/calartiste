@@ -25,8 +25,8 @@ function authHeaders() {
 // ─── Composants UI ───
 function Section({ title, children }) {
   return (
-    <div style={{background:'var(--white)', border:'1px solid rgba(197,110,74,0.15)', borderRadius:2, overflow:'hidden', marginBottom:24}}>
-      <div style={{padding:'16px 24px', borderBottom:'1px solid rgba(197,110,74,0.12)', background:'var(--light)'}}>
+    <div style={{background:'var(--cream)', border:'1px solid rgba(197,110,74,0.15)', borderRadius:2, overflow:'hidden', marginBottom:24}}>
+      <div style={{padding:'16px 24px', borderBottom:'1px solid rgba(197,110,74,0.12)', background:'var(--deep)'}}>
         <h3 style={{fontFamily:"'Cormorant Garant', serif", fontSize:18, fontWeight:400, color:'var(--black)'}}>{title}</h3>
       </div>
       <div style={{padding:24}}>{children}</div>
@@ -217,7 +217,7 @@ export default function AdminPage() {
   const isDirty = hasUnsavedChanges()
 
   return (
-    <div style={{paddingTop:80, minHeight:'100vh', background:'#f0ece4'}}>
+    <div style={{paddingTop:80, minHeight:'100vh', background:'var(--light)'}}>
 
       {/* Header BO */}
       <div style={{background:'var(--cream)', borderBottom:'1px solid rgba(197,110,74,0.15)', padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
@@ -401,7 +401,7 @@ export default function AdminPage() {
                       style={{
                         display:'grid', gridTemplateColumns:'24px 72px 1fr auto',
                         alignItems:'center', gap:16,
-                        padding:'12px 16px', background:'var(--white)',
+                        padding:'12px 16px', background:'var(--cream)',
                         border:'1px solid rgba(197,110,74,0.12)',
                         cursor:'grab', userSelect:'none', transition:'all 0.15s'
                       }}
@@ -580,7 +580,7 @@ export default function AdminPage() {
   )
 }
 
-const inputStyle = { border:'1px solid rgba(197,110,74,0.2)', padding:'10px 12px', fontSize:14, fontFamily:'Inter, sans-serif', background:'var(--white)', color:'var(--black)', outline:'none', width:'100%', boxSizing:'border-box', transition:'border-color 0.2s' }
+const inputStyle = { border:'1px solid rgba(197,110,74,0.2)', padding:'10px 12px', fontSize:14, fontFamily:'Inter, sans-serif', background:'var(--light)', color:'var(--black)', outline:'none', width:'100%', boxSizing:'border-box', transition:'border-color 0.2s' }
 const btnPrimary = { padding:'12px 32px', background:'var(--gold)', color:'#e9e5da', border:'none', cursor:'pointer', fontSize:12, fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', fontFamily:'Inter, sans-serif', transition:'background 0.2s' }
 const btnSecondary = { padding:'12px 24px', background:'transparent', color:'var(--stone)', border:'1px solid rgba(197,110,74,0.2)', cursor:'pointer', fontSize:12, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', fontFamily:'Inter, sans-serif' }
 const iconBtn = { padding:'7px 14px', border:'1px solid rgba(197,110,74,0.2)', background:'transparent', cursor:'pointer', fontSize:12, fontFamily:'Inter, sans-serif', color:'var(--stone)', transition:'all 0.2s' }
