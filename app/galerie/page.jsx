@@ -121,24 +121,21 @@ export default function GaleriePage() {
           </div>
         </div>
 
-        {/* Panneau filtres */}
+        {/* Catégories — toujours visibles */}
+        <div style={{padding:'16px 48px', display:'flex', gap:8, flexWrap:'wrap', borderBottom:'1px solid rgba(197,110,74,0.1)'}}>
+          <FilterBtn active={category === 'all'} onClick={() => setCategory('all')}>Tout</FilterBtn>
+          {categories.map(c => (
+            <FilterBtn key={c} active={category === c} onClick={() => setCategory(c)}>{c}</FilterBtn>
+          ))}
+        </div>
+
+        {/* Panneau filtres prix + disponibilité */}
         {showFilters && (
           <div style={{
             padding:'24px 48px', background:'var(--light)',
             borderBottom:'1px solid rgba(197,110,74,0.15)',
-            display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:32
+            display:'grid', gridTemplateColumns:'1fr 1fr', gap:48
           }}>
-            {/* Catégorie */}
-            <div>
-              <p style={{fontSize:10, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--stone)', marginBottom:12}}>Catégorie</p>
-              <div style={{display:'flex', flexWrap:'wrap', gap:6}}>
-                <FilterBtn active={category === 'all'} onClick={() => setCategory('all')}>Toutes</FilterBtn>
-                {categories.map(c => (
-                  <FilterBtn key={c} active={category === c} onClick={() => setCategory(c)}>{c}</FilterBtn>
-                ))}
-              </div>
-            </div>
-
             {/* Prix */}
             <div>
               <p style={{fontSize:10, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--stone)', marginBottom:12}}>Prix</p>
