@@ -44,6 +44,12 @@ export default function AProposPage() {
           setS(obj)
         }
         setLoading(false)
+        // Scroll vers l'ancre #contact après chargement
+        if (window.location.hash === '#contact') {
+          setTimeout(() => {
+            document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
+          }, 100)
+        }
       })
   }, [])
 
