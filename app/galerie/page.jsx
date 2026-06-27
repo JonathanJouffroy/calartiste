@@ -32,8 +32,12 @@ export default function GaleriePage() {
     return () => { supabase.removeChannel(channel) }
   }, [])
 
-  const categories = [...new Set(artworks.map(a => a.category).filter(Boolean))]
-  const filtered = filter === 'all' ? artworks : artworks.filter(a => a.category === filter)
+  // Dédoublonne les catégories en ignorant la casse
+  const categories = [...new Map(
+    artworks.map(a => a.category).filter(Boolean)
+      .map(c => [c.toLowerCase().trim(), c])
+  ).values()]
+  const filtered = filter === 'all' ? artworks : artworks.filter(a => a.category?.toLowerCase().trim() === filter.toLowerCase().trim())
 
   return (
     <>
