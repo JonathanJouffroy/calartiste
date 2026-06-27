@@ -11,7 +11,7 @@ const PRICE_RANGES = [
   { label: '> 300 €', value: '300+' },
 ]
 
-const AVAILABILITY_OPTIONS = ['Disponible', 'Sur commande', 'Vendu']
+const AVAILABILITY_OPTIONS = ['Disponible', 'Vendu']
 
 const DEFAULT_BANDEAU = {
   bandeauTitle:  'Vous souhaitez une œuvre',
