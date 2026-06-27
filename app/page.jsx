@@ -40,6 +40,12 @@ async function getHomeData() {
       commandeTitleItalic: s.commandeTitleItalic || 'rien que pour vous',
       commandeDesc:        s.commandeDesc        || "Clara réalise des œuvres personnalisées selon vos envies : couleurs, dimensions, thème, émotion… Chaque commande est une collaboration unique entre l'artiste et vous.",
       commandeBtn:         s.commandeBtn         || 'Faire une demande',
+      commandeFeatures:    s.commandeFeatures    || JSON.stringify([
+        { icon:'🎨', title:'Choix des couleurs', desc:'Palette adaptée à votre intérieur ou vos préférences' },
+        { icon:'📐', title:'Format sur mesure', desc:'Du petit format encadrable au grand format mural' },
+        { icon:'💬', title:'Échange & création', desc:'Un dialogue avec Clara pour affiner votre vision' },
+        { icon:'✨', title:'Œuvre unique', desc:"Signée et certifiée originale par l'artiste" },
+      ]),
     }
   }
 }
@@ -119,18 +125,17 @@ export default async function HomePage() {
           </Link>
         </div>
         <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
-          {[
-            { icon:'🎨', title:'Choix des couleurs', desc:'Palette adaptée à votre intérieur ou vos préférences' },
-            { icon:'📐', title:'Format sur mesure', desc:'Du petit format encadrable au grand format mural' },
-            { icon:'💬', title:'Échange & création', desc:'Un dialogue avec Clara pour affiner votre vision' },
-            { icon:'✨', title:'Œuvre unique', desc:'Signée et certifiée originale par l\'artiste' },
-          ].map(({ icon, title, desc }) => (
-            <div key={title} style={{padding:20, background:'rgba(233,229,218,0.05)', border:'1px solid rgba(233,229,218,0.08)'}}>
-              <div style={{fontSize:24, marginBottom:10}}>{icon}</div>
-              <div style={{fontFamily:"'Cormorant Garant', serif", fontSize:16, fontWeight:400, color:'var(--cream)', marginBottom:6}}>{title}</div>
-              <div style={{fontSize:12, color:'rgba(233,229,218,0.5)', lineHeight:1.6}}>{desc}</div>
-            </div>
-          ))}
+          {(() => {
+            let features = []
+            try { features = JSON.parse(settings.commandeFeatures) } catch {}
+            return features.map(({ icon, title, desc }) => (
+              <div key={title} style={{padding:20, background:'rgba(233,229,218,0.05)', border:'1px solid rgba(233,229,218,0.08)'}}>
+                <div style={{fontSize:24, marginBottom:10}}>{icon}</div>
+                <div style={{fontFamily:"'Cormorant Garant', serif", fontSize:16, fontWeight:400, color:'var(--cream)', marginBottom:6}}>{title}</div>
+                <div style={{fontSize:12, color:'rgba(233,229,218,0.5)', lineHeight:1.6}}>{desc}</div>
+              </div>
+            ))
+          })()}
         </div>
       </section>
 
