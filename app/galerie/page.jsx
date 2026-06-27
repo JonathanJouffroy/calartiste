@@ -13,10 +13,18 @@ const PRICE_RANGES = [
 
 const AVAILABILITY_OPTIONS = ['Disponible', 'Sur commande', 'Vendu']
 
+const DEFAULT_BANDEAU = {
+  bandeauTitle:  'Vous souhaitez une œuvre',
+  bandeauItalic: 'unique & personnalisée ?',
+  bandeauDesc:   'Clara crée sur commande — couleurs, format et thème selon vos envies.',
+  bandeauBtn:    'Faire une demande',
+}
+
 export default function GaleriePage() {
   const [artworks, setArtworks] = useState([])
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
+  const [bandeau, setBandeau] = useState(DEFAULT_BANDEAU)
 
   // Filtres
   const [category, setCategory] = useState('all')
@@ -26,9 +34,16 @@ export default function GaleriePage() {
   useEffect(() => {
     document.title = 'Galerie — Peintures originales à vendre | Art intuitif & abstrait · Calar.Artiste'
     const load = async () => {
-      const { data } = await supabase
-        .from('artworks').select('*').order('sort_order').order('created_at')
-      setArtworks(data || [])
+      const [{ data: artworksData }, { data: settingsData }] = await Promise.all([
+        supabase.from('artworks').select('*').order('sort_order').order('created_at'),
+        supabase.from('settings').select('key, value').in('key', ['bandeauTitle','bandeauItalic','bandeauDesc','bandeauBtn'])
+      ])
+      setArtworks(artworksData || [])
+      if (settingsData) {
+        const s = { ...DEFAULT_BANDEAU }
+        settingsData.forEach(r => { if (r.key in s) s[r.key] = r.value })
+        setBandeau(s)
+      }
       setLoading(false)
     }
     load()
@@ -190,10 +205,10 @@ export default function GaleriePage() {
       }}>
         <div>
           <p style={{fontFamily:"'Cormorant Garant', serif", fontSize:24, fontWeight:300, color:'var(--black)', marginBottom:6}}>
-            Vous souhaitez une œuvre <em style={{fontStyle:'italic', color:'var(--gold)'}}>unique & personnalisée ?</em>
+            {bandeau.bandeauTitle} <em style={{fontStyle:'italic', color:'var(--gold)'}}>{bandeau.bandeauItalic}</em>
           </p>
           <p style={{fontSize:13, color:'var(--stone)'}}>
-            Clara crée sur commande — couleurs, format et thème selon vos envies.
+            {bandeau.bandeauDesc}
           </p>
         </div>
         <a href="/a-propos#contact" style={{
@@ -201,7 +216,7 @@ export default function GaleriePage() {
           background:'var(--gold)', color:'var(--cream)',
           fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase',
           textDecoration:'none'
-        }}>Faire une demande</a>
+        }}>{bandeau.bandeauBtn}</a>
       </div>
 
       <Footer />
