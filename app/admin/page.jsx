@@ -25,6 +25,10 @@ const DEFAULT_SETTINGS = {
     { icon:'💬', title:'Échange & création', desc:'Un dialogue avec Clara pour affiner votre vision' },
     { icon:'✨', title:'Œuvre unique', desc:"Signée et certifiée originale par l'artiste" },
   ]),
+  bandeauTitle:   'Vous souhaitez une œuvre',
+  bandeauItalic:  'unique & personnalisée ?',
+  bandeauDesc:    'Clara crée sur commande — couleurs, format et thème selon vos envies.',
+  bandeauBtn:     'Faire une demande',
 }
 
 function authHeaders() {
@@ -572,6 +576,24 @@ export default function AdminPage() {
                     </div>
                   ))
                 })()}
+              </Field>
+            </Section>
+
+            <Section title="📢 Bandeau commande (galerie)">
+              <p style={{fontSize:12, color:'rgba(233,229,218,0.5)', marginBottom:16}}>Le bandeau affiché en bas de la page galerie.</p>
+              <Row>
+                <Field label="Titre (partie normale)">
+                  <input value={settings.bandeauTitle} onChange={e=>setSettings(s=>({...s,bandeauTitle:e.target.value}))} style={inputStyle} placeholder="Vous souhaitez une œuvre"/>
+                </Field>
+                <Field label="Titre (partie italique dorée)">
+                  <input value={settings.bandeauItalic} onChange={e=>setSettings(s=>({...s,bandeauItalic:e.target.value}))} style={inputStyle} placeholder="unique & personnalisée ?"/>
+                </Field>
+              </Row>
+              <Field label="Description">
+                <input value={settings.bandeauDesc} onChange={e=>setSettings(s=>({...s,bandeauDesc:e.target.value}))} style={inputStyle} placeholder="Clara crée sur commande…"/>
+              </Field>
+              <Field label="Texte du bouton">
+                <input value={settings.bandeauBtn} onChange={e=>setSettings(s=>({...s,bandeauBtn:e.target.value}))} style={inputStyle} placeholder="Faire une demande"/>
               </Field>
             </Section>
 
