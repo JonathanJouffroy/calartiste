@@ -57,7 +57,7 @@ export default function AProposPage() {
             <p style={{fontSize:16, fontWeight:400, color:'var(--gold)', letterSpacing:'0.06em', marginBottom:32, fontFamily:"'Cormorant Garant', serif", fontStyle:'italic'}}>
               {s.aboutPageSubtitle}
             </p>
-            <p style={{fontSize:15, color:'var(--stone)', lineHeight:1.85, maxWidth:420}}>
+            <p style={{fontSize:15, color:'var(--stone)', lineHeight:1.85, maxWidth:420, whiteSpace:'pre-wrap'}}>
               {s.aboutPageIntro}
             </p>
           </div>
@@ -82,7 +82,7 @@ export default function AProposPage() {
             <blockquote style={{
               fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(24px, 3vw, 36px)',
               fontWeight:300, fontStyle:'italic', color:'#e9e5da',
-              maxWidth:700, margin:'0 auto', lineHeight:1.4
+              maxWidth:700, margin:'0 auto', lineHeight:1.4, whiteSpace:'pre-wrap'
             }}>
               {s.aboutPageCitation}
             </blockquote>
@@ -98,7 +98,7 @@ export default function AProposPage() {
           <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:44, fontWeight:300, lineHeight:1.1, color:'var(--black)'}}>
             Ma démarche<br/><em style={{fontStyle:'italic', color:'var(--gold)'}}>artistique</em>
           </h2>
-          <p style={{fontSize:15, color:'var(--stone)', lineHeight:1.9}}>
+          <p style={{fontSize:15, color:'var(--stone)', lineHeight:1.9, whiteSpace:'pre-wrap'}}>
             {s.aboutPageDemarche}
           </p>
         </section>
