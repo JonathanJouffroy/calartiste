@@ -121,13 +121,14 @@ export default function OeuvrePage() {
             </h1>
             <p style={{fontSize:14, color:'var(--stone)', marginBottom:32}}>{artwork.year}</p>
             <hr style={{border:'none', borderTop:'1px solid rgba(197,110,74,0.2)', margin:'32px 0'}}/>
-            <p style={{fontSize:15, lineHeight:1.85, color:'var(--stone)'}}>
+            <p style={{fontSize:15, lineHeight:1.85, color:'var(--stone)', whiteSpace:'pre-wrap'}}>
               {artwork.description || 'Pas de description disponible.'}
             </p>
             <div style={{marginTop:40, display:'grid', gap:16}}>
               {[
                 ['Technique', artwork.technique],
                 ['Dimensions', artwork.dimensions],
+                ['Temps de réalisation', artwork.duration],
                 ['Disponibilité', artwork.availability]
               ].map(([label, val]) => val && (
                 <div key={label} style={{display:'flex', justifyContent:'space-between', borderBottom:'1px solid rgba(197,110,74,0.1)', paddingBottom:12}}>
