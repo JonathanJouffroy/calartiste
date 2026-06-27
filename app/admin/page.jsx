@@ -217,7 +217,7 @@ export default function AdminPage() {
   const isDirty = hasUnsavedChanges()
 
   return (
-    <div style={{paddingTop:80, minHeight:'100vh', background:'var(--black)'}}>
+    <div style={{paddingTop:80, minHeight:'100vh', background:'var(--cream)'}}>
 
       {/* Header BO */}
       <div style={{background:'var(--gold)', borderBottom:'1px solid rgba(197,110,74,0.15)', padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
