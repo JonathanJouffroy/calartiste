@@ -3,6 +3,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 export default function ArtworkCard({ artwork: a }) {
+  // Ajoute un paramètre unique basé sur updated_at pour bypasser le cache
+  const imageUrl = a.image_url
+    ? `${a.image_url}?t=${a.updated_at || a.created_at || Date.now()}`
+    : null
+
   return (
     <Link href={`/oeuvre/${a.id}`} style={{display:'block', cursor:'pointer', textDecoration:'none'}}>
       <div style={{
@@ -13,8 +18,8 @@ export default function ArtworkCard({ artwork: a }) {
         onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
       >
         <div style={{position:'relative', aspectRatio:'3/4', overflow:'hidden', background:'var(--light)'}}>
-          {a.image_url
-            ? <Image src={a.image_url} alt={a.title} fill style={{objectFit:'cover'}} sizes="(max-width:768px) 50vw, 30vw"/>
+          {imageUrl
+            ? <Image key={imageUrl} src={imageUrl} alt={a.title} fill style={{objectFit:'cover'}} sizes="(max-width:768px) 50vw, 30vw" unoptimized/>
             : <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:40,opacity:0.2}}>🖼️</div>
           }
           <div style={{
@@ -30,7 +35,20 @@ export default function ArtworkCard({ artwork: a }) {
         <div style={{padding:'16px 0 4px'}}>
           <div style={{fontFamily:"'Cormorant Garant', serif", fontSize:20, fontWeight:400, color:'var(--black)'}}>{a.title}</div>
           <div style={{fontSize:12, color:'var(--stone)', marginTop:4}}>{a.category || ''} · {a.year}</div>
-          {a.price && <div style={{fontSize:13, color:'var(--gold)', marginTop:6, fontWeight:500}}>{Number(a.price).toLocaleString('fr-FR')} €</div>}
+          <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:8}}>
+            {a.price
+              ? <div style={{fontSize:13, color:'var(--gold)', fontWeight:500}}>{Number(a.price).toLocaleString('fr-FR')} €</div>
+              : <div/>
+            }
+            {a.availability && (
+              <span style={{
+                fontSize:10, fontWeight:500, letterSpacing:'0.08em', textTransform:'uppercase',
+                padding:'3px 8px',
+                background: a.availability === 'Disponible' ? 'rgba(96,111,82,0.12)' : a.availability === 'Vendu' ? 'rgba(196,49,43,0.1)' : 'rgba(197,110,74,0.1)',
+                color: a.availability === 'Disponible' ? 'var(--blue)' : a.availability === 'Vendu' ? 'var(--red)' : 'var(--gold)'
+              }}>{a.availability}</span>
+            )}
+          </div>
         </div>
       </div>
       <style jsx global>{`
