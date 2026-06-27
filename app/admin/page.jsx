@@ -19,6 +19,12 @@ const DEFAULT_SETTINGS = {
   commandeTitleItalic: 'rien que pour vous',
   commandeDesc: "Clara réalise des œuvres personnalisées selon vos envies : couleurs, dimensions, thème, émotion… Chaque commande est une collaboration unique entre l'artiste et vous.",
   commandeBtn: 'Faire une demande',
+  commandeFeatures: JSON.stringify([
+    { icon:'🎨', title:'Choix des couleurs', desc:'Palette adaptée à votre intérieur ou vos préférences' },
+    { icon:'📐', title:'Format sur mesure', desc:'Du petit format encadrable au grand format mural' },
+    { icon:'💬', title:'Échange & création', desc:'Un dialogue avec Clara pour affiner votre vision' },
+    { icon:'✨', title:'Œuvre unique', desc:"Signée et certifiée originale par l'artiste" },
+  ]),
 }
 
 function authHeaders() {
@@ -524,6 +530,48 @@ export default function AdminPage() {
               </Field>
               <Field label="Texte du bouton">
                 <input value={settings.commandeBtn} onChange={e=>setSettings(s=>({...s,commandeBtn:e.target.value}))} style={inputStyle} placeholder="Faire une demande"/>
+              </Field>
+
+              <Field label="Les 4 blocs caractéristiques">
+                <p style={{fontSize:11, color:'rgba(233,229,218,0.5)', marginBottom:12}}>Modifiez les 4 blocs affichés à droite de la section commande.</p>
+                {(() => {
+                  let features = []
+                  try { features = JSON.parse(settings.commandeFeatures) } catch { features = [] }
+                  return features.map((f, i) => (
+                    <div key={i} style={{display:'grid', gridTemplateColumns:'48px 1fr 1fr', gap:8, marginBottom:10, alignItems:'start'}}>
+                      <input
+                        value={f.icon}
+                        onChange={e => {
+                          const updated = [...features]
+                          updated[i] = { ...f, icon: e.target.value }
+                          setSettings(s => ({...s, commandeFeatures: JSON.stringify(updated)}))
+                        }}
+                        placeholder="🎨"
+                        style={{...inputStyle, textAlign:'center', fontSize:20, padding:'8px 4px'}}
+                      />
+                      <input
+                        value={f.title}
+                        onChange={e => {
+                          const updated = [...features]
+                          updated[i] = { ...f, title: e.target.value }
+                          setSettings(s => ({...s, commandeFeatures: JSON.stringify(updated)}))
+                        }}
+                        placeholder="Titre"
+                        style={inputStyle}
+                      />
+                      <input
+                        value={f.desc}
+                        onChange={e => {
+                          const updated = [...features]
+                          updated[i] = { ...f, desc: e.target.value }
+                          setSettings(s => ({...s, commandeFeatures: JSON.stringify(updated)}))
+                        }}
+                        placeholder="Description"
+                        style={inputStyle}
+                      />
+                    </div>
+                  ))
+                })()}
               </Field>
             </Section>
 
