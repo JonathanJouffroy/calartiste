@@ -32,10 +32,14 @@ async function getHomeData() {
       aboutLine1:  s.aboutLine1  || 'Infirmière',
       aboutLine2:  s.aboutLine2  || 'artiste',
       aboutText:   s.aboutText   || "Clara est artiste, passionnée et créative.",
-      featuredId:  s.featuredId  || null,
-      recentId1:   s.recentId1   || null,
-      recentId2:   s.recentId2   || null,
-      recentId3:   s.recentId3   || null,
+      featuredId:          s.featuredId          || null,
+      recentId1:           s.recentId1           || null,
+      recentId2:           s.recentId2           || null,
+      recentId3:           s.recentId3           || null,
+      commandeTitle:       s.commandeTitle       || 'Une œuvre unique,',
+      commandeTitleItalic: s.commandeTitleItalic || 'rien que pour vous',
+      commandeDesc:        s.commandeDesc        || "Clara réalise des œuvres personnalisées selon vos envies : couleurs, dimensions, thème, émotion… Chaque commande est une collaboration unique entre l'artiste et vous.",
+      commandeBtn:         s.commandeBtn         || 'Faire une demande',
     }
   }
 }
@@ -88,6 +92,45 @@ export default async function HomePage() {
         </div>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:32}}>
           {recent.map(a => <ArtworkCard key={a.id} artwork={a} />)}
+        </div>
+      </section>
+
+      {/* COMMANDE PERSONNALISÉE */}
+      <section style={{
+        background:'var(--black)', padding:'80px 48px',
+        display:'grid', gridTemplateColumns:'1fr 1fr', gap:80, alignItems:'center'
+      }}>
+        <div>
+          <p style={{fontSize:11, fontWeight:500, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--gold)', marginBottom:20}}>
+            Création sur mesure
+          </p>
+          <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:44, fontWeight:300, lineHeight:1.1, color:'var(--cream)', marginBottom:24}}>
+            {settings.commandeTitle}<br/><em style={{fontStyle:'italic', color:'var(--gold)'}}>{settings.commandeTitleItalic}</em>
+          </h2>
+          <p style={{fontSize:15, lineHeight:1.85, color:'rgba(233,229,218,0.65)', marginBottom:40, maxWidth:420, whiteSpace:'pre-wrap'}}>
+            {settings.commandeDesc}
+          </p>
+          <Link href="/a-propos#contact" style={{
+            display:'inline-block', padding:'14px 36px',
+            background:'var(--gold)', color:'var(--cream)',
+            fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase'
+          }}>
+            {settings.commandeBtn}
+          </Link>
+        </div>
+        <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
+          {[
+            { icon:'🎨', title:'Choix des couleurs', desc:'Palette adaptée à votre intérieur ou vos préférences' },
+            { icon:'📐', title:'Format sur mesure', desc:'Du petit format encadrable au grand format mural' },
+            { icon:'💬', title:'Échange & création', desc:'Un dialogue avec Clara pour affiner votre vision' },
+            { icon:'✨', title:'Œuvre unique', desc:'Signée et certifiée originale par l\'artiste' },
+          ].map(({ icon, title, desc }) => (
+            <div key={title} style={{padding:20, background:'rgba(233,229,218,0.05)', border:'1px solid rgba(233,229,218,0.08)'}}>
+              <div style={{fontSize:24, marginBottom:10}}>{icon}</div>
+              <div style={{fontFamily:"'Cormorant Garant', serif", fontSize:16, fontWeight:400, color:'var(--cream)', marginBottom:6}}>{title}</div>
+              <div style={{fontSize:12, color:'rgba(233,229,218,0.5)', lineHeight:1.6}}>{desc}</div>
+            </div>
+          ))}
         </div>
       </section>
 
