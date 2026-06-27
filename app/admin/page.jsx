@@ -25,9 +25,9 @@ function authHeaders() {
 // ─── Composants UI ───
 function Section({ title, children }) {
   return (
-    <div style={{background:'#2a2520', border:'1px solid rgba(197,110,74,0.1)', borderRadius:2, overflow:'hidden', marginBottom:24}}>
-      <div style={{padding:'16px 24px', borderBottom:'1px solid rgba(197,110,74,0.12)', background:'#1a1008'}}>
-        <h3 style={{fontFamily:"'Cormorant Garant', serif", fontSize:18, fontWeight:400, color:'#f5f2ed'}}>{title}</h3>
+    <div style={{background:'var(--black)', border:'1px solid rgba(197,110,74,0.15)', borderRadius:2, overflow:'hidden', marginBottom:24}}>
+      <div style={{padding:'16px 24px', borderBottom:'1px solid rgba(197,110,74,0.12)', background:'rgba(0,0,0,0.2)'}}>
+        <h3 style={{fontFamily:"'Cormorant Garant', serif", fontSize:18, fontWeight:400, color:'var(--cream)'}}>{title}</h3>
       </div>
       <div style={{padding:24}}>{children}</div>
     </div>
@@ -38,8 +38,8 @@ function Field({ label, hint, children }) {
   return (
     <div style={{display:'grid', gap:6, minWidth:0, marginBottom:16}}>
       <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline'}}>
-        <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(245,242,237,0.6)'}}>{label}</label>
-        {hint && <span style={{fontSize:11, color:'var(--stone)', opacity:0.7}}>{hint}</span>}
+        <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(233,229,218,0.6)'}}>{label}</label>
+        {hint && <span style={{fontSize:11, color:'rgba(233,229,218,0.5)'}}>{hint}</span>}
       </div>
       {children}
     </div>
@@ -217,13 +217,13 @@ export default function AdminPage() {
   const isDirty = hasUnsavedChanges()
 
   return (
-    <div style={{paddingTop:80, minHeight:'100vh', background:'#2a2520'}}>
+    <div style={{paddingTop:80, minHeight:'100vh', background:'var(--black)'}}>
 
       {/* Header BO */}
-      <div style={{background:'#886f68', borderBottom:'1px solid rgba(197,110,74,0.15)', padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+      <div style={{background:'var(--gold)', borderBottom:'1px solid rgba(197,110,74,0.15)', padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
         <div>
-          <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:28, fontWeight:400, color:'#f5f2ed'}}>Back Office</h1>
-          <p style={{color:'rgba(245,242,237,0.7)', fontSize:12, marginTop:2}}>Calar.Artiste — Gestion du site</p>
+          <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:28, fontWeight:400, color:'#e9e5da'}}>Back Office</h1>
+          <p style={{color:'rgba(233,229,218,0.8)', fontSize:12, marginTop:2}}>Calar.Artiste — Gestion du site</p>
         </div>
         <div style={{display:'flex', gap:12, alignItems:'center'}}>
           <a href="/" target="_blank" style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)', textDecoration:'none', padding:'8px 16px', border:'1px solid rgba(197,110,74,0.2)', background:'transparent'}}>
@@ -245,15 +245,15 @@ export default function AdminPage() {
             { key:'settings', label:'⚙️ Personnaliser' }
           ].map(({ key, label }) => (
             <button key={key} onClick={() => switchTab(key)}
-              onMouseEnter={e => { if (tab !== key) { e.currentTarget.style.background = '#886f68'; e.currentTarget.style.color = '#f5f2ed' }}}
+              onMouseEnter={e => { if (tab !== key) { e.currentTarget.style.background = 'var(--stone)'; e.currentTarget.style.color = '#e9e5da' }}}
               onMouseLeave={e => { if (tab !== key) { e.currentTarget.style.background = 'var(--cream)'; e.currentTarget.style.color = 'var(--stone)' }}}
               style={{
                 padding:'10px 20px', fontSize:12, fontWeight:500,
                 letterSpacing:'0.06em', cursor:'pointer', fontFamily:'Inter, sans-serif',
-                background: tab === key ? '#c56e4a' : 'var(--cream)',
-                color: tab === key ? '#f5f2ed' : 'var(--stone)',
+                background: tab === key ? 'var(--gold)' : 'var(--cream)',
+                color: tab === key ? '#e9e5da' : 'var(--stone)',
                 border: '1px solid',
-                borderColor: tab === key ? '#c56e4a' : 'rgba(197,110,74,0.2)',
+                borderColor: tab === key ? 'var(--gold)' : 'rgba(197,110,74,0.2)',
                 transition:'all 0.2s'
               }}>{label}</button>
           ))}
@@ -324,7 +324,7 @@ export default function AdminPage() {
                   onClick={() => fileRef.current?.click()}
                   style={{
                     border:'2px dashed rgba(197,110,74,0.25)', padding:32,
-                    textAlign:'center', background:'rgba(245,242,237,0.08)', cursor:'pointer',
+                    textAlign:'center', background:'rgba(233,229,218,0.08)', cursor:'pointer',
                     transition:'border-color 0.2s'
                   }}
                   onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--gold)'}
@@ -542,7 +542,7 @@ export default function AdminPage() {
                     }
                   }}
                 />
-                <div onClick={() => photoRef.current?.click()} style={{border:'2px dashed rgba(197,110,74,0.25)', padding:24, textAlign:'center', background:'rgba(245,242,237,0.08)', cursor:'pointer'}}
+                <div onClick={() => photoRef.current?.click()} style={{border:'2px dashed rgba(197,110,74,0.25)', padding:24, textAlign:'center', background:'rgba(233,229,218,0.08)', cursor:'pointer'}}
                   onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--gold)'}
                   onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(197,110,74,0.25)'}
                 >
@@ -583,7 +583,7 @@ export default function AdminPage() {
   )
 }
 
-const inputStyle = { border:'1px solid rgba(197,110,74,0.2)', padding:'10px 12px', fontSize:14, fontFamily:'Inter, sans-serif', background:'#f5f2ed', color:'#2a2520', outline:'none', width:'100%', boxSizing:'border-box', transition:'border-color 0.2s' }
+const inputStyle = { border:'1px solid rgba(197,110,74,0.2)', padding:'10px 12px', fontSize:14, fontFamily:'Inter, sans-serif', background:'var(--cream)', color:'var(--black)', outline:'none', width:'100%', boxSizing:'border-box', transition:'border-color 0.2s' }
 const btnPrimary = { padding:'12px 32px', background:'var(--gold)', color:'#e9e5da', border:'none', cursor:'pointer', fontSize:12, fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', fontFamily:'Inter, sans-serif', transition:'background 0.2s' }
 const btnSecondary = { padding:'12px 24px', background:'transparent', color:'var(--stone)', border:'1px solid rgba(197,110,74,0.2)', cursor:'pointer', fontSize:12, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', fontFamily:'Inter, sans-serif' }
 const iconBtn = { padding:'7px 14px', border:'1px solid rgba(197,110,74,0.2)', background:'transparent', cursor:'pointer', fontSize:12, fontFamily:'Inter, sans-serif', color:'var(--stone)', transition:'all 0.2s' }
