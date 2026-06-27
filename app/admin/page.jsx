@@ -244,15 +244,18 @@ export default function AdminPage() {
             { key:'list', label:`📋 Œuvres (${artworks.length})` },
             { key:'settings', label:'⚙️ Personnaliser' }
           ].map(({ key, label }) => (
-            <button key={key} onClick={() => switchTab(key)} style={{
-              padding:'10px 20px', fontSize:12, fontWeight:500,
-              letterSpacing:'0.06em', cursor:'pointer', fontFamily:'Inter, sans-serif',
-              background: tab === key ? 'var(--black)' : 'var(--cream)',
-              color: tab === key ? '#e9e5da' : 'var(--stone)',
-              border: '1px solid',
-              borderColor: tab === key ? 'var(--black)' : 'rgba(197,110,74,0.2)',
-              transition:'all 0.2s'
-            }}>{label}</button>
+            <button key={key} onClick={() => switchTab(key)}
+              onMouseEnter={e => { if (tab !== key) { e.currentTarget.style.background = 'var(--light)'; e.currentTarget.style.color = 'var(--black)' }}}
+              onMouseLeave={e => { if (tab !== key) { e.currentTarget.style.background = 'var(--cream)'; e.currentTarget.style.color = 'var(--stone)' }}}
+              style={{
+                padding:'10px 20px', fontSize:12, fontWeight:500,
+                letterSpacing:'0.06em', cursor:'pointer', fontFamily:'Inter, sans-serif',
+                background: tab === key ? 'var(--black)' : 'var(--cream)',
+                color: tab === key ? '#e9e5da' : 'var(--stone)',
+                border: '1px solid',
+                borderColor: tab === key ? 'var(--black)' : 'rgba(197,110,74,0.2)',
+                transition:'all 0.2s'
+              }}>{label}</button>
           ))}
           {isDirty && (
             <span style={{alignSelf:'center', marginLeft:8, fontSize:11, color:'var(--gold)', fontWeight:500}}>
