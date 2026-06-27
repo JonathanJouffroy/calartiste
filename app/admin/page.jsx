@@ -326,7 +326,6 @@ export default function AdminPage() {
                 <select value={form.availability} onChange={e => setForm(f => ({...f, availability:e.target.value}))} style={inputStyle}>
                   <option>Disponible</option>
                   <option>Vendu</option>
-                  <option>Sur commande</option>
                 </select>
               </Field>
             </Section>
