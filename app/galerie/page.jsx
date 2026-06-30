@@ -26,7 +26,6 @@ export default function GaleriePage() {
   const [showFilters, setShowFilters] = useState(false)
   const [bandeau, setBandeau] = useState(DEFAULT_BANDEAU)
 
-  // Filtres
   const [category, setCategory] = useState('all')
   const [priceRange, setPriceRange] = useState('all')
   const [availability, setAvailability] = useState('all')
@@ -56,19 +55,14 @@ export default function GaleriePage() {
     return () => { supabase.removeChannel(channel) }
   }, [])
 
-  // Catégories dédoublonnées
   const categories = [...new Map(
     artworks.map(a => a.category).filter(Boolean)
       .map(c => [c.toLowerCase().trim(), c])
   ).values()]
 
-  // Filtrage combiné
   const filtered = artworks.filter(a => {
-    // Catégorie
     if (category !== 'all' && a.category?.toLowerCase().trim() !== category.toLowerCase().trim()) return false
-    // Disponibilité
     if (availability !== 'all' && a.availability !== availability) return false
-    // Prix
     if (priceRange !== 'all') {
       const p = parseFloat(a.price) || 0
       if (priceRange === '0-100' && p >= 100) return false
@@ -88,13 +82,13 @@ export default function GaleriePage() {
 
   const FilterBtn = ({ active, onClick, children }) => (
     <button onClick={onClick} style={{
-      padding:'6px 16px', border:'1px solid',
+      padding:'6px 14px', border:'1px solid',
       borderColor: active ? 'var(--gold)' : 'rgba(197,110,74,0.25)',
       background: active ? 'var(--gold)' : 'transparent',
       color: active ? '#e9e5da' : 'var(--stone)',
       fontSize:11, fontWeight:500, letterSpacing:'0.08em',
       textTransform:'uppercase', cursor:'pointer', fontFamily:'Inter, sans-serif',
-      transition:'all 0.15s'
+      transition:'all 0.15s', whiteSpace:'nowrap'
     }}>{children}</button>
   )
 
@@ -102,15 +96,15 @@ export default function GaleriePage() {
     <>
       <div style={{paddingTop:80}}>
         {/* Header */}
-        <div style={{padding:'60px 48px 32px', borderBottom:'1px solid rgba(197,110,74,0.2)'}}>
-          <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-end', flexWrap:'wrap', gap:16}}>
+        <div className="gal-header" style={{padding:'48px 24px 28px', borderBottom:'1px solid rgba(197,110,74,0.2)'}}>
+          <div className="gal-header-row" style={{display:'flex', justifyContent:'space-between', alignItems:'flex-end', flexWrap:'wrap', gap:16}}>
             <div>
-              <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:56, fontWeight:300}}>La Galerie</h1>
+              <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(36px, 8vw, 56px)', fontWeight:300}}>La Galerie</h1>
               <p style={{color:'var(--stone)', fontSize:13, marginTop:8}}>
                 {loading ? 'Chargement…' : `${filtered.length} œuvre${filtered.length > 1 ? 's' : ''}`}
               </p>
             </div>
-            <div style={{display:'flex', gap:12, alignItems:'center'}}>
+            <div style={{display:'flex', gap:12, alignItems:'center', flexWrap:'wrap'}}>
               {hasActiveFilters && (
                 <button onClick={resetFilters} style={{
                   fontSize:11, color:'var(--gold)', background:'none', border:'none',
@@ -119,7 +113,7 @@ export default function GaleriePage() {
                 }}>Effacer les filtres</button>
               )}
               <button onClick={() => setShowFilters(f => !f)} style={{
-                padding:'8px 20px', border:'1px solid rgba(197,110,74,0.3)',
+                padding:'8px 18px', border:'1px solid rgba(197,110,74,0.3)',
                 background: showFilters ? 'var(--black)' : 'transparent',
                 color: showFilters ? '#e9e5da' : 'var(--stone)',
                 fontSize:11, fontWeight:500, letterSpacing:'0.1em',
@@ -136,22 +130,21 @@ export default function GaleriePage() {
           </div>
         </div>
 
-        {/* Catégories — toujours visibles */}
-        <div style={{padding:'16px 48px', display:'flex', gap:8, flexWrap:'wrap', borderBottom:'1px solid rgba(197,110,74,0.1)'}}>
+        {/* Catégories — toujours visibles, scrollables sur mobile */}
+        <div className="gal-categories" style={{padding:'14px 24px', display:'flex', gap:8, flexWrap:'wrap', borderBottom:'1px solid rgba(197,110,74,0.1)', overflowX:'auto'}}>
           <FilterBtn active={category === 'all'} onClick={() => setCategory('all')}>Tout</FilterBtn>
           {categories.map(c => (
             <FilterBtn key={c} active={category === c} onClick={() => setCategory(c)}>{c}</FilterBtn>
           ))}
         </div>
 
-        {/* Panneau filtres prix + disponibilité */}
+        {/* Panneau filtres */}
         {showFilters && (
-          <div style={{
-            padding:'24px 48px', background:'var(--light)',
+          <div className="gal-filters-panel" style={{
+            padding:'20px 24px', background:'var(--light)',
             borderBottom:'1px solid rgba(197,110,74,0.15)',
-            display:'grid', gridTemplateColumns:'1fr 1fr', gap:48
+            display:'grid', gridTemplateColumns:'1fr 1fr', gap:32
           }}>
-            {/* Prix */}
             <div>
               <p style={{fontSize:10, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--stone)', marginBottom:12}}>Prix</p>
               <div style={{display:'flex', flexWrap:'wrap', gap:6}}>
@@ -160,8 +153,6 @@ export default function GaleriePage() {
                 ))}
               </div>
             </div>
-
-            {/* Disponibilité */}
             <div>
               <p style={{fontSize:10, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--stone)', marginBottom:12}}>Disponibilité</p>
               <div style={{display:'flex', flexWrap:'wrap', gap:6}}>
@@ -175,14 +166,14 @@ export default function GaleriePage() {
         )}
 
         {/* Grille */}
-        <div style={{padding:48, display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:32}}>
+        <div className="gal-grid" style={{padding:24, display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:24}}>
           {loading
             ? Array(6).fill(0).map((_, i) => (
                 <div key={i} style={{aspectRatio:'3/4', background:'var(--light)', animation:'pulse 1.5s infinite'}}/>
               ))
             : filtered.length === 0
               ? (
-                <div style={{gridColumn:'1/-1', textAlign:'center', padding:'80px 0', color:'var(--stone)'}}>
+                <div style={{gridColumn:'1/-1', textAlign:'center', padding:'60px 0', color:'var(--stone)'}}>
                   <div style={{fontSize:40, marginBottom:16, opacity:0.3}}>🎨</div>
                   <p style={{marginBottom:12}}>Aucune œuvre ne correspond à vos filtres.</p>
                   <button onClick={resetFilters} style={{
@@ -197,14 +188,14 @@ export default function GaleriePage() {
       </div>
 
       {/* BANNIÈRE COMMANDE PERSONNALISÉE */}
-      <div style={{
+      <div className="gal-bandeau" style={{
         background:'var(--light)', borderTop:'1px solid rgba(197,110,74,0.2)',
         borderBottom:'1px solid rgba(197,110,74,0.2)',
-        padding:'40px 48px',
-        display:'flex', alignItems:'center', justifyContent:'space-between', gap:24, flexWrap:'wrap'
+        padding:'32px 24px',
+        display:'flex', alignItems:'center', justifyContent:'space-between', gap:20, flexWrap:'wrap'
       }}>
         <div>
-          <p style={{fontFamily:"'Cormorant Garant', serif", fontSize:24, fontWeight:300, color:'var(--black)', marginBottom:6}}>
+          <p style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(18px, 4vw, 24px)', fontWeight:300, color:'var(--black)', marginBottom:6}}>
             {bandeau.bandeauTitle} <em style={{fontStyle:'italic', color:'var(--gold)'}}>{bandeau.bandeauItalic}</em>
           </p>
           <p style={{fontSize:13, color:'var(--stone)'}}>
@@ -212,7 +203,7 @@ export default function GaleriePage() {
           </p>
         </div>
         <a href="/a-propos#contact" style={{
-          display:'inline-block', padding:'12px 32px', flexShrink:0,
+          display:'inline-block', padding:'12px 28px', flexShrink:0,
           background:'var(--gold)', color:'var(--cream)',
           fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase',
           textDecoration:'none'
@@ -223,11 +214,15 @@ export default function GaleriePage() {
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
         @media (max-width: 768px) {
-          div[style*="grid-template-columns: 1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
-          div[style*="padding: 60px 48px"] { padding: 40px 20px 24px !important; }
-          div[style*="padding: 24px 48px"] { padding: 20px !important; }
-          div[style*="padding: 48px"] { padding: 20px !important; }
-          div[style*="minmax(280px"] { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important; }
+          .gal-header { padding: 32px 16px 20px !important; }
+          .gal-categories { padding: 12px 16px !important; flex-wrap: nowrap !important; }
+          .gal-filters-panel { grid-template-columns: 1fr !important; padding: 16px !important; gap: 24px !important; }
+          .gal-grid { padding: 16px !important; grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+          .gal-bandeau { padding: 24px 16px !important; flex-direction: column !important; align-items: flex-start !important; }
+          .gal-bandeau a { width: 100%; text-align: center; box-sizing: border-box; }
+        }
+        @media (max-width: 380px) {
+          .gal-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </>
