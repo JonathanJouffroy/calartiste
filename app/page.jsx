@@ -62,24 +62,24 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* HERO — texte centré uniquement */}
-      <section style={{
+      {/* HERO */}
+      <section className="home-hero" style={{
         paddingTop:80,
         display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
-        textAlign:'center', padding:'120px 48px 80px',
+        textAlign:'center', padding:'120px 24px 64px',
         background:'var(--cream)'
       }}>
-        <p style={{fontSize:11, fontWeight:500, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--blue)', marginBottom:20}}>
+        <p className="home-hero-eyebrow" style={{fontSize:11, fontWeight:500, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--blue)', marginBottom:20}}>
           {settings.heroEyebrow}
         </p>
-        <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(48px, 7vw, 88px)', fontWeight:300, lineHeight:1.08, marginBottom:24, maxWidth:800}}>
+        <h1 className="home-hero-title" style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(40px, 9vw, 88px)', fontWeight:300, lineHeight:1.08, marginBottom:24, maxWidth:800}}>
           {settings.heroLine1}<br/>
           <em style={{fontStyle:'italic', color:'var(--gold)'}}>{settings.heroLine2}</em>
         </h1>
-        <p style={{fontSize:16, color:'var(--stone)', lineHeight:1.85, maxWidth:520, marginBottom:44, whiteSpace:'pre-wrap'}}>
+        <p className="home-hero-desc" style={{fontSize:16, color:'var(--stone)', lineHeight:1.85, maxWidth:520, marginBottom:40, whiteSpace:'pre-wrap'}}>
           {settings.heroDesc}
         </p>
-        <Link href="/galerie" style={{
+        <Link href="/galerie" className="home-hero-btn" style={{
           display:'inline-block', padding:'14px 40px',
           background:'var(--gold)', color:'#e9e5da',
           fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase'
@@ -89,50 +89,50 @@ export default async function HomePage() {
       </section>
 
       {/* RECENT WORKS */}
-      <section style={{padding:'80px 48px', background:'var(--cream)'}}>
-        <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:48}}>
-          <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:36, fontWeight:300}}>Œuvres récentes</h2>
+      <section className="home-section-pad" style={{padding:'64px 24px', background:'var(--cream)'}}>
+        <div className="home-section-header" style={{display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:36, flexWrap:'wrap', gap:12}}>
+          <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(28px, 5vw, 36px)', fontWeight:300}}>Œuvres récentes</h2>
           <Link href="/galerie" style={{fontSize:11, fontWeight:500, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--stone)'}}>
             Voir toute la galerie →
           </Link>
         </div>
-        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:32}}>
+        <div className="home-recent-grid" style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:24}}>
           {recent.map(a => <ArtworkCard key={a.id} artwork={a} />)}
         </div>
       </section>
 
       {/* COMMANDE PERSONNALISÉE */}
-      <section style={{
-        background:'var(--black)', padding:'80px 48px',
-        display:'grid', gridTemplateColumns:'1fr 1fr', gap:80, alignItems:'center'
+      <section className="home-commande" style={{
+        background:'var(--black)', padding:'64px 24px',
+        display:'grid', gridTemplateColumns:'1fr 1fr', gap:48, alignItems:'center'
       }}>
         <div>
-          <p style={{fontSize:11, fontWeight:500, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--gold)', marginBottom:20}}>
+          <p style={{fontSize:11, fontWeight:500, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--gold)', marginBottom:16}}>
             Création sur mesure
           </p>
-          <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:44, fontWeight:300, lineHeight:1.1, color:'var(--cream)', marginBottom:24}}>
+          <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(28px, 5vw, 44px)', fontWeight:300, lineHeight:1.15, color:'var(--cream)', marginBottom:20}}>
             {settings.commandeTitle}<br/><em style={{fontStyle:'italic', color:'var(--gold)'}}>{settings.commandeTitleItalic}</em>
           </h2>
-          <p style={{fontSize:15, lineHeight:1.85, color:'rgba(233,229,218,0.65)', marginBottom:40, maxWidth:420, whiteSpace:'pre-wrap'}}>
+          <p style={{fontSize:14, lineHeight:1.8, color:'rgba(233,229,218,0.65)', marginBottom:32, maxWidth:420, whiteSpace:'pre-wrap'}}>
             {settings.commandeDesc}
           </p>
           <Link href="/a-propos#contact" style={{
-            display:'inline-block', padding:'14px 36px',
+            display:'inline-block', padding:'14px 32px',
             background:'var(--gold)', color:'var(--cream)',
             fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase'
           }}>
             {settings.commandeBtn}
           </Link>
         </div>
-        <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
+        <div className="home-commande-features" style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
           {(() => {
             let features = []
             try { features = JSON.parse(settings.commandeFeatures) } catch {}
             return features.map(({ icon, title, desc }) => (
-              <div key={title} style={{padding:20, background:'rgba(233,229,218,0.05)', border:'1px solid rgba(233,229,218,0.08)'}}>
-                <div style={{fontSize:24, marginBottom:10}}>{icon}</div>
-                <div style={{fontFamily:"'Cormorant Garant', serif", fontSize:16, fontWeight:400, color:'var(--cream)', marginBottom:6}}>{title}</div>
-                <div style={{fontSize:12, color:'rgba(233,229,218,0.5)', lineHeight:1.6}}>{desc}</div>
+              <div key={title} style={{padding:16, background:'rgba(233,229,218,0.05)', border:'1px solid rgba(233,229,218,0.08)'}}>
+                <div style={{fontSize:22, marginBottom:8}}>{icon}</div>
+                <div style={{fontFamily:"'Cormorant Garant', serif", fontSize:15, fontWeight:400, color:'var(--cream)', marginBottom:5}}>{title}</div>
+                <div style={{fontSize:11, color:'rgba(233,229,218,0.5)', lineHeight:1.55}}>{desc}</div>
               </div>
             ))
           })()}
@@ -140,23 +140,24 @@ export default async function HomePage() {
       </section>
 
       {/* ABOUT */}
-      <section style={{
+      <section className="home-about" style={{
         background:'#dedad3', borderTop:'2px solid var(--gold)', borderBottom:'2px solid var(--gold)',
-        padding:'80px 48px', display:'grid', gridTemplateColumns:'1fr 1.2fr', gap:80, alignItems:'center'
+        padding:'64px 24px', display:'grid', gridTemplateColumns:'1fr 1.2fr', gap:48, alignItems:'center'
       }}>
-        <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:44, fontWeight:300, lineHeight:1.1}}>
+        <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(28px, 5vw, 44px)', fontWeight:300, lineHeight:1.15}}>
           {settings.aboutLine1}<br/>& <em style={{fontStyle:'italic', color:'var(--gold)'}}>{settings.aboutLine2}</em>
         </h2>
-        <p style={{fontSize:15, lineHeight:1.8, color:'var(--stone)', whiteSpace:'pre-wrap'}}>
+        <p style={{fontSize:14, lineHeight:1.8, color:'var(--stone)', whiteSpace:'pre-wrap'}}>
           {settings.aboutText}
         </p>
       </section>
 
       {/* FOOTER */}
-      <footer style={{
+      <footer className="home-footer" style={{
         background:'#d4d0c7', borderTop:'1px solid rgba(197,110,74,0.2)',
-        color:'rgba(42,37,32,0.5)', padding:'40px 48px',
-        display:'flex', justifyContent:'space-between', alignItems:'center', fontSize:12
+        color:'rgba(42,37,32,0.5)', padding:'32px 24px',
+        display:'flex', justifyContent:'space-between', alignItems:'center', fontSize:12,
+        flexWrap:'wrap', gap:16, textAlign:'center'
       }}>
         <span style={{fontFamily:"'Cormorant Garant', serif", fontSize:18, color:'var(--gold)'}}>Calar.Artiste</span>
         <a href="https://www.instagram.com/calar.artiste" target="_blank" rel="noopener"
@@ -170,6 +171,33 @@ export default async function HomePage() {
         </a>
         <span>© 2026 · Calar.Artiste · Tous droits réservés</span>
       </footer>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .home-hero { padding: 100px 20px 48px !important; }
+          .home-commande,
+          .home-about {
+            grid-template-columns: 1fr !important;
+            gap: 32px !important;
+            text-align: left;
+          }
+          .home-commande-features {
+            grid-template-columns: 1fr 1fr !important;
+          }
+          .home-section-header {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+          }
+          .home-footer {
+            flex-direction: column !important;
+            text-align: center !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .home-recent-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+          .home-commande-features { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </>
   )
 }
