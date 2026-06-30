@@ -1,12 +1,17 @@
 'use client'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useLang } from '@/lib/LangContext'
 
 export default function ArtworkCard({ artwork: a }) {
-  // Ajoute un paramètre unique basé sur updated_at pour bypasser le cache
+  const { lang, t } = useLang()
   const imageUrl = a.image_url
     ? `${a.image_url}?t=${a.updated_at || a.created_at || Date.now()}`
     : null
+
+  const title = lang === 'en' && a.title_en ? a.title_en : a.title
+  const category = lang === 'en' && a.category_en ? a.category_en : a.category
+  const availability = lang === 'en' ? t(`availability.${a.availability}`) : a.availability
 
   return (
     <Link href={`/oeuvre/${a.id}`} style={{display:'block', cursor:'pointer', textDecoration:'none'}}>
@@ -19,7 +24,7 @@ export default function ArtworkCard({ artwork: a }) {
       >
         <div style={{position:'relative', aspectRatio:'3/4', overflow:'hidden', background:'var(--light)'}}>
           {imageUrl
-            ? <Image key={imageUrl} src={imageUrl} alt={a.title} fill style={{objectFit:'cover'}} sizes="(max-width:768px) 50vw, 30vw" unoptimized/>
+            ? <Image key={imageUrl} src={imageUrl} alt={title} fill style={{objectFit:'cover'}} sizes="(max-width:768px) 50vw, 30vw" unoptimized/>
             : <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:40,opacity:0.2}}>🖼️</div>
           }
           <div style={{
@@ -29,15 +34,15 @@ export default function ArtworkCard({ artwork: a }) {
           }}
             className="card-overlay"
           >
-            <span style={{fontSize:11,fontWeight:600,letterSpacing:'0.1em',textTransform:'uppercase',color:'#2A2520'}}>Voir l'œuvre</span>
+            <span style={{fontSize:11,fontWeight:600,letterSpacing:'0.1em',textTransform:'uppercase',color:'#2A2520'}}>{t('gallery.viewArtwork')}</span>
           </div>
         </div>
         <div style={{padding:'16px 0 4px'}}>
-          <div style={{fontFamily:"'Cormorant Garant', serif", fontSize:20, fontWeight:400, color:'var(--black)'}}>{a.title}</div>
-          <div style={{fontSize:12, color:'var(--stone)', marginTop:4}}>{a.category || ''} · {a.year}</div>
+          <div style={{fontFamily:"'Cormorant Garant', serif", fontSize:20, fontWeight:400, color:'var(--black)'}}>{title}</div>
+          <div style={{fontSize:12, color:'var(--stone)', marginTop:4}}>{category || ''} · {a.year}</div>
           <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:8}}>
             {a.price
-              ? <div style={{fontSize:13, color:'var(--gold)', fontWeight:500}}>{Number(a.price).toLocaleString('fr-FR')} €</div>
+              ? <div style={{fontSize:13, color:'var(--gold)', fontWeight:500}}>{Number(a.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
               : <div/>
             }
             {a.availability && (
@@ -46,7 +51,7 @@ export default function ArtworkCard({ artwork: a }) {
                 padding:'3px 8px',
                 background: a.availability === 'Disponible' ? 'rgba(96,111,82,0.12)' : a.availability === 'Vendu' ? 'rgba(196,49,43,0.1)' : 'rgba(197,110,74,0.1)',
                 color: a.availability === 'Disponible' ? 'var(--blue)' : a.availability === 'Vendu' ? 'var(--red)' : 'var(--gold)'
-              }}>{a.availability}</span>
+              }}>{availability}</span>
             )}
           </div>
         </div>

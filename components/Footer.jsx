@@ -1,4 +1,8 @@
+'use client'
+import { useLang } from '@/lib/LangContext'
+
 export default function Footer() {
+  const { t } = useLang()
   return (
     <footer style={{
       background:'#d4d0c7', borderTop:'1px solid rgba(197,110,74,0.2)',
@@ -16,7 +20,7 @@ export default function Footer() {
         </svg>
         @calar.artiste
       </a>
-      <span>© 2026 · Calar.Artiste · Tous droits réservés</span>
+      <span>© 2026 · Calar.Artiste · {t('footer.rights')}</span>
     </footer>
   )
 }

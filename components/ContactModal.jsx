@@ -1,8 +1,10 @@
 'use client'
 import { useState } from 'react'
 import emailjs from '@emailjs/browser'
+import { useLang } from '@/lib/LangContext'
 
 export default function ContactModal({ artwork, onClose }) {
+  const { t } = useLang()
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
@@ -28,7 +30,7 @@ export default function ContactModal({ artwork, onClose }) {
       )
       setSent(true)
     } catch (err) {
-      setError('Une erreur est survenue. Veuillez réessayer.')
+      setError(t('contact.error'))
     } finally {
       setSending(false)
     }
@@ -56,42 +58,42 @@ export default function ContactModal({ artwork, onClose }) {
         {sent ? (
           <div style={{textAlign:'center', padding:'20px 0'}}>
             <div style={{fontSize:40, marginBottom:12}}>✉️</div>
-            <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:24, fontWeight:300, marginBottom:8}}>Message envoyé !</h2>
-            <p style={{fontSize:13, color:'var(--stone)', lineHeight:1.7}}>Merci pour votre intérêt.<br/>Clara vous répondra dans les plus brefs délais.</p>
+            <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:24, fontWeight:300, marginBottom:8}}>{t('contact.sent')}</h2>
+            <p style={{fontSize:13, color:'var(--stone)', lineHeight:1.7}}>{t('contact.sentDesc')}<br/>{t('contact.sentDesc2')}</p>
           </div>
         ) : (
           <>
             <p style={{fontSize:10, fontWeight:500, letterSpacing:'0.16em', textTransform:'uppercase', color:'var(--blue)', marginBottom:10}}>Calar.Artiste</p>
-            <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:30, fontWeight:300, marginBottom:6}}>Me contacter</h2>
-            <p style={{fontSize:12, color:'var(--stone)', marginBottom:28, fontStyle:'italic'}}>À propos de : {artwork.title} ({artwork.year})</p>
+            <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:30, fontWeight:300, marginBottom:6}}>{t('contact.title')}</h2>
+            <p style={{fontSize:12, color:'var(--stone)', marginBottom:28, fontStyle:'italic'}}>{t('contact.about')} {artwork.title} ({artwork.year})</p>
 
             {error && <div style={{fontSize:12, color:'#c44', padding:'10px 14px', background:'rgba(196,49,43,0.08)', border:'1px solid rgba(196,49,43,0.2)', marginBottom:16}}>{error}</div>}
 
             <form onSubmit={send} style={{display:'grid', gap:18}}>
               <div className="contact-form-row" style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
                 <div style={{display:'grid', gap:8}}>
-                  <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>Prénom *</label>
+                  <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>{t('contact.firstname')} *</label>
                   <input name="firstname" required placeholder="Marie" style={inputStyle}/>
                 </div>
                 <div style={{display:'grid', gap:8}}>
-                  <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>Nom</label>
+                  <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>{t('contact.lastname')}</label>
                   <input name="lastname" placeholder="Dupont" style={inputStyle}/>
                 </div>
               </div>
               <div style={{display:'grid', gap:8}}>
-                <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>Email *</label>
+                <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>{t('contact.email')} *</label>
                 <input name="email" type="email" required placeholder="marie@exemple.fr" style={inputStyle}/>
               </div>
               <div style={{display:'grid', gap:8}}>
-                <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>Message</label>
-                <textarea name="message" rows={4} placeholder="Je suis intéressé(e) par cette œuvre…" style={{...inputStyle, resize:'vertical'}}/>
+                <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>{t('contact.message')}</label>
+                <textarea name="message" rows={4} style={{...inputStyle, resize:'vertical'}}/>
               </div>
               <button type="submit" disabled={sending} style={{
                 padding:'14px 40px', background:'var(--gold)', color:'#e9e5da',
                 border:'none', cursor:'pointer', fontSize:11, fontWeight:600,
                 letterSpacing:'0.14em', textTransform:'uppercase', width:'100%'
               }}>
-                {sending ? 'Envoi…' : 'Envoyer ma demande'}
+                {sending ? t('contact.sending') : t('contact.send')}
               </button>
             </form>
           </>
