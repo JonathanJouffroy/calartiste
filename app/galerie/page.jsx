@@ -3,46 +3,55 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import ArtworkCard from '@/components/ArtworkCard'
 import Footer from '@/components/Footer'
-
-const PRICE_RANGES = [
-  { label: 'Tous les prix', value: 'all' },
-  { label: '< 100 €', value: '0-100' },
-  { label: '100 – 300 €', value: '100-300' },
-  { label: '> 300 €', value: '300+' },
-]
+import { useLang } from '@/lib/LangContext'
 
 const AVAILABILITY_OPTIONS = ['Disponible', 'Vendu']
 
-const DEFAULT_BANDEAU = {
+const DEFAULT_BANDEAU_FR = {
   bandeauTitle:  'Vous souhaitez une œuvre',
   bandeauItalic: 'unique & personnalisée ?',
   bandeauDesc:   'Clara crée sur commande — couleurs, format et thème selon vos envies.',
   bandeauBtn:    'Faire une demande',
 }
+const DEFAULT_BANDEAU_EN = {
+  bandeauTitle:  'Looking for a',
+  bandeauItalic: 'unique & personalized artwork?',
+  bandeauDesc:   'Clara creates custom pieces — colors, format and theme based on your wishes.',
+  bandeauBtn:    'Make a request',
+}
 
 export default function GaleriePage() {
+  const { lang, t } = useLang()
   const [artworks, setArtworks] = useState([])
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
-  const [bandeau, setBandeau] = useState(DEFAULT_BANDEAU)
+  const [settingsRaw, setSettingsRaw] = useState({})
 
   const [category, setCategory] = useState('all')
   const [priceRange, setPriceRange] = useState('all')
   const [availability, setAvailability] = useState('all')
 
+  const PRICE_RANGES = [
+    { label: t('gallery.allPrices'), value: 'all' },
+    { label: '< 100 €', value: '0-100' },
+    { label: '100 – 300 €', value: '100-300' },
+    { label: '> 300 €', value: '300+' },
+  ]
+
   useEffect(() => {
-    document.title = 'Galerie — Peintures originales à vendre | Art intuitif & abstrait · Calar.Artiste'
+    document.title = lang === 'en'
+      ? 'Gallery — Original paintings for sale | Intuitive & abstract art · Calar.Artiste'
+      : 'Galerie — Peintures originales à vendre | Art intuitif & abstrait · Calar.Artiste'
+
     const load = async () => {
       const [{ data: artworksData }, { data: settingsData }] = await Promise.all([
         supabase.from('artworks').select('*').order('sort_order').order('created_at'),
-        supabase.from('settings').select('key, value').in('key', ['bandeauTitle','bandeauItalic','bandeauDesc','bandeauBtn'])
+        supabase.from('settings').select('key, value')
       ])
       setArtworks(artworksData || [])
-      if (settingsData) {
-        const s = { ...DEFAULT_BANDEAU }
-        settingsData.forEach(r => { if (r.key in s) s[r.key] = r.value })
-        setBandeau(s)
-      }
+      const s = {}
+      ;(settingsData || []).forEach(r => { s[r.key] = r.value })
+      setSettingsRaw(s)
       setLoading(false)
     }
     load()
@@ -53,15 +62,25 @@ export default function GaleriePage() {
       .subscribe()
 
     return () => { supabase.removeChannel(channel) }
-  }, [])
+  }, [lang])
+
+  const bandeauDefaults = lang === 'en' ? DEFAULT_BANDEAU_EN : DEFAULT_BANDEAU_FR
+  const bandeau = {
+    bandeauTitle:  (lang === 'en' ? settingsRaw.bandeauTitle_en : settingsRaw.bandeauTitle) || bandeauDefaults.bandeauTitle,
+    bandeauItalic: (lang === 'en' ? settingsRaw.bandeauItalic_en : settingsRaw.bandeauItalic) || bandeauDefaults.bandeauItalic,
+    bandeauDesc:   (lang === 'en' ? settingsRaw.bandeauDesc_en : settingsRaw.bandeauDesc) || bandeauDefaults.bandeauDesc,
+    bandeauBtn:    (lang === 'en' ? settingsRaw.bandeauBtn_en : settingsRaw.bandeauBtn) || bandeauDefaults.bandeauBtn,
+  }
 
   const categories = [...new Map(
-    artworks.map(a => a.category).filter(Boolean)
+    artworks.map(a => lang === 'en' && a.category_en ? a.category_en : a.category)
+      .filter(Boolean)
       .map(c => [c.toLowerCase().trim(), c])
   ).values()]
 
   const filtered = artworks.filter(a => {
-    if (category !== 'all' && a.category?.toLowerCase().trim() !== category.toLowerCase().trim()) return false
+    const cat = lang === 'en' && a.category_en ? a.category_en : a.category
+    if (category !== 'all' && cat?.toLowerCase().trim() !== category.toLowerCase().trim()) return false
     if (availability !== 'all' && a.availability !== availability) return false
     if (priceRange !== 'all') {
       const p = parseFloat(a.price) || 0
@@ -95,13 +114,12 @@ export default function GaleriePage() {
   return (
     <>
       <div style={{paddingTop:80}}>
-        {/* Header */}
         <div className="gal-header" style={{padding:'48px 24px 28px', borderBottom:'1px solid rgba(197,110,74,0.2)'}}>
           <div className="gal-header-row" style={{display:'flex', justifyContent:'space-between', alignItems:'flex-end', flexWrap:'wrap', gap:16}}>
             <div>
-              <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(36px, 8vw, 56px)', fontWeight:300}}>La Galerie</h1>
+              <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(36px, 8vw, 56px)', fontWeight:300}}>{t('gallery.title')}</h1>
               <p style={{color:'var(--stone)', fontSize:13, marginTop:8}}>
-                {loading ? 'Chargement…' : `${filtered.length} œuvre${filtered.length > 1 ? 's' : ''}`}
+                {loading ? t('gallery.loading') : `${filtered.length} ${filtered.length > 1 ? t('gallery.artworks') : t('gallery.artwork')}`}
               </p>
             </div>
             <div style={{display:'flex', gap:12, alignItems:'center', flexWrap:'wrap'}}>
@@ -110,7 +128,7 @@ export default function GaleriePage() {
                   fontSize:11, color:'var(--gold)', background:'none', border:'none',
                   cursor:'pointer', fontWeight:500, letterSpacing:'0.08em', textTransform:'uppercase',
                   textDecoration:'underline'
-                }}>Effacer les filtres</button>
+                }}>{t('gallery.clearFilters')}</button>
               )}
               <button onClick={() => setShowFilters(f => !f)} style={{
                 padding:'8px 18px', border:'1px solid rgba(197,110,74,0.3)',
@@ -120,7 +138,7 @@ export default function GaleriePage() {
                 textTransform:'uppercase', cursor:'pointer', fontFamily:'Inter, sans-serif',
                 display:'flex', alignItems:'center', gap:8
               }}>
-                ⚙ Filtres {hasActiveFilters && <span style={{
+                ⚙ {t('gallery.filters')} {hasActiveFilters && <span style={{
                   background:'var(--gold)', color:'#e9e5da', borderRadius:'50%',
                   width:18, height:18, display:'inline-flex', alignItems:'center', justifyContent:'center',
                   fontSize:10, fontWeight:700
@@ -130,15 +148,13 @@ export default function GaleriePage() {
           </div>
         </div>
 
-        {/* Catégories — toujours visibles, scrollables sur mobile */}
         <div className="gal-categories" style={{padding:'14px 24px', display:'flex', gap:8, flexWrap:'wrap', borderBottom:'1px solid rgba(197,110,74,0.1)', overflowX:'auto'}}>
-          <FilterBtn active={category === 'all'} onClick={() => setCategory('all')}>Tout</FilterBtn>
+          <FilterBtn active={category === 'all'} onClick={() => setCategory('all')}>{t('gallery.all')}</FilterBtn>
           {categories.map(c => (
             <FilterBtn key={c} active={category === c} onClick={() => setCategory(c)}>{c}</FilterBtn>
           ))}
         </div>
 
-        {/* Panneau filtres */}
         {showFilters && (
           <div className="gal-filters-panel" style={{
             padding:'20px 24px', background:'var(--light)',
@@ -146,7 +162,7 @@ export default function GaleriePage() {
             display:'grid', gridTemplateColumns:'1fr 1fr', gap:32
           }}>
             <div>
-              <p style={{fontSize:10, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--stone)', marginBottom:12}}>Prix</p>
+              <p style={{fontSize:10, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--stone)', marginBottom:12}}>{t('gallery.price')}</p>
               <div style={{display:'flex', flexWrap:'wrap', gap:6}}>
                 {PRICE_RANGES.map(r => (
                   <FilterBtn key={r.value} active={priceRange === r.value} onClick={() => setPriceRange(r.value)}>{r.label}</FilterBtn>
@@ -154,18 +170,17 @@ export default function GaleriePage() {
               </div>
             </div>
             <div>
-              <p style={{fontSize:10, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--stone)', marginBottom:12}}>Disponibilité</p>
+              <p style={{fontSize:10, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--stone)', marginBottom:12}}>{t('gallery.availability')}</p>
               <div style={{display:'flex', flexWrap:'wrap', gap:6}}>
-                <FilterBtn active={availability === 'all'} onClick={() => setAvailability('all')}>Toutes</FilterBtn>
+                <FilterBtn active={availability === 'all'} onClick={() => setAvailability('all')}>{t('gallery.allAvailability')}</FilterBtn>
                 {AVAILABILITY_OPTIONS.map(o => (
-                  <FilterBtn key={o} active={availability === o} onClick={() => setAvailability(o)}>{o}</FilterBtn>
+                  <FilterBtn key={o} active={availability === o} onClick={() => setAvailability(o)}>{lang === 'en' ? t(`availability.${o}`) : o}</FilterBtn>
                 ))}
               </div>
             </div>
           </div>
         )}
 
-        {/* Grille */}
         <div className="gal-grid" style={{padding:24, display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:24}}>
           {loading
             ? Array(6).fill(0).map((_, i) => (
@@ -175,11 +190,11 @@ export default function GaleriePage() {
               ? (
                 <div style={{gridColumn:'1/-1', textAlign:'center', padding:'60px 0', color:'var(--stone)'}}>
                   <div style={{fontSize:40, marginBottom:16, opacity:0.3}}>🎨</div>
-                  <p style={{marginBottom:12}}>Aucune œuvre ne correspond à vos filtres.</p>
+                  <p style={{marginBottom:12}}>{t('gallery.noResults')}</p>
                   <button onClick={resetFilters} style={{
                     fontSize:11, color:'var(--gold)', background:'none', border:'none',
                     cursor:'pointer', fontWeight:500, textDecoration:'underline'
-                  }}>Effacer les filtres</button>
+                  }}>{t('gallery.clearFilters')}</button>
                 </div>
               )
               : filtered.map(a => <ArtworkCard key={a.id} artwork={a}/>)
@@ -187,7 +202,6 @@ export default function GaleriePage() {
         </div>
       </div>
 
-      {/* BANNIÈRE COMMANDE PERSONNALISÉE */}
       <div className="gal-bandeau" style={{
         background:'var(--light)', borderTop:'1px solid rgba(197,110,74,0.2)',
         borderBottom:'1px solid rgba(197,110,74,0.2)',
