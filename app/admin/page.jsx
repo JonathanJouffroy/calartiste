@@ -234,12 +234,12 @@ export default function AdminPage() {
     <div style={{paddingTop:80, minHeight:'100vh', background:'var(--cream)'}}>
 
       {/* Header BO */}
-      <div style={{background:'var(--gold)', borderBottom:'1px solid rgba(197,110,74,0.15)', padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+      <div className="admin-header" style={{background:'var(--gold)', borderBottom:'1px solid rgba(197,110,74,0.15)', padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:16}}>
         <div>
           <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:28, fontWeight:400, color:'#e9e5da'}}>Back Office</h1>
           <p style={{color:'rgba(233,229,218,0.8)', fontSize:12, marginTop:2}}>Calar.Artiste — Gestion du site</p>
         </div>
-        <div style={{display:'flex', gap:12, alignItems:'center'}}>
+        <div style={{display:'flex', gap:12, alignItems:'center', flexWrap:'wrap'}}>
           <a href="/" target="_blank" style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)', textDecoration:'none', padding:'8px 16px', border:'1px solid rgba(197,110,74,0.2)', background:'transparent'}}>
             Voir le site ↗
           </a>
@@ -665,8 +665,15 @@ export default function AdminPage() {
       <style>{`
         @keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
         @media (max-width: 768px) {
+          .admin-header { padding: 20px !important; }
+          .admin-header h1 { font-size: 22px !important; }
           div[style*="grid-template-columns: 24px 72px"] { grid-template-columns: 72px 1fr !important; }
           div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+          div[style*="grid-template-columns: 48px 1fr 1fr"] { grid-template-columns: 40px 1fr !important; }
+          div[style*="grid-template-columns: 48px 1fr 1fr"] input:last-child { grid-column: 1 / -1 !important; }
+        }
+        @media (max-width: 480px) {
+          .admin-header { flex-direction: column; align-items: flex-start !important; }
         }
       `}</style>
     </div>
