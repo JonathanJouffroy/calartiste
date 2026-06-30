@@ -29,6 +29,12 @@ const DEFAULT_SETTINGS = {
   bandeauItalic:  'unique & personnalisée ?',
   bandeauDesc:    'Clara crée sur commande — couleurs, format et thème selon vos envies.',
   bandeauBtn:     'Faire une demande',
+  // ─── Versions anglaises ───
+  heroLine1_en: '', heroLine2_en: '', heroDesc_en: '', heroBtn_en: '', heroEyebrow_en: '',
+  aboutLine1_en: '', aboutLine2_en: '', aboutText_en: '',
+  aboutPageTitle_en: '', aboutPageSubtitle_en: '', aboutPageIntro_en: '', aboutPageDemarche_en: '', aboutPageCitation_en: '',
+  commandeTitle_en: '', commandeTitleItalic_en: '', commandeDesc_en: '', commandeBtn_en: '', commandeFeatures_en: '',
+  bandeauTitle_en: '', bandeauItalic_en: '', bandeauDesc_en: '', bandeauBtn_en: '',
 }
 
 function authHeaders() {
@@ -72,7 +78,9 @@ export default function AdminPage() {
   const [savedSettings, setSavedSettings] = useState(DEFAULT_SETTINGS)
   const [toast, setToast] = useState({ msg:'', type:'success' })
   const [editId, setEditId] = useState('')
-  const [form, setForm] = useState({ title:'', year:'', category:'', desc:'', technique:'', dimensions:'', price:'', availability:'Disponible', duration:'' })
+  const [form, setForm] = useState({ title:'', year:'', category:'', desc:'', technique:'', dimensions:'', price:'', availability:'Disponible', duration:'', title_en:'', category_en:'', description_en:'', technique_en:'', dimensions_en:'', duration_en:'' })
+  const [formLang, setFormLang] = useState('fr')
+  const [settingsLang, setSettingsLang] = useState('fr')
   const [savedForm, setSavedForm] = useState(null)
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState('')
@@ -171,7 +179,10 @@ export default function AdminPage() {
         title: form.title, year: parseInt(form.year)||null, category: form.category,
         description: form.desc, technique: form.technique, dimensions: form.dimensions,
         price: parseFloat(form.price)||null, availability: form.availability,
-        duration: form.duration || null, image_url: imageUrl
+        duration: form.duration || null, image_url: imageUrl,
+        title_en: form.title_en || null, category_en: form.category_en || null,
+        description_en: form.description_en || null, technique_en: form.technique_en || null,
+        dimensions_en: form.dimensions_en || null, duration_en: form.duration_en || null,
       }
 
       const url = editId ? `/api/artworks/${editId}` : '/api/artworks'
@@ -191,16 +202,22 @@ export default function AdminPage() {
   }
 
   const resetForm = () => {
-    setForm({ title:'', year:'', category:'', desc:'', technique:'', dimensions:'', price:'', availability:'Disponible' })
+    setForm({ title:'', year:'', category:'', desc:'', technique:'', dimensions:'', price:'', availability:'Disponible', duration:'', title_en:'', category_en:'', description_en:'', technique_en:'', dimensions_en:'', duration_en:'' })
     setEditId(''); setImageFile(null); setImagePreview(''); setUploadError('')
-    setSavedForm(null)
+    setSavedForm(null); setFormLang('fr')
     if (fileRef.current) fileRef.current.value = ''
   }
 
   const handleEdit = (a) => {
-    const f = { title:a.title, year:a.year||'', category:a.category||'', desc:a.description||'', technique:a.technique||'', dimensions:a.dimensions||'', price:a.price||'', availability:a.availability||'Disponible', duration:a.duration||'' }
+    const f = {
+      title:a.title, year:a.year||'', category:a.category||'', desc:a.description||'',
+      technique:a.technique||'', dimensions:a.dimensions||'', price:a.price||'',
+      availability:a.availability||'Disponible', duration:a.duration||'',
+      title_en:a.title_en||'', category_en:a.category_en||'', description_en:a.description_en||'',
+      technique_en:a.technique_en||'', dimensions_en:a.dimensions_en||'', duration_en:a.duration_en||'',
+    }
     setForm(f); setSavedForm(f)
-    setEditId(a.id); setImagePreview(a.image_url||''); setTab('add')
+    setEditId(a.id); setImagePreview(a.image_url||''); setTab('add'); setFormLang('fr')
     window.scrollTo(0, 200)
   }
 
@@ -288,47 +305,92 @@ export default function AdminPage() {
               </div>
             )}
 
-            <Section title="Informations générales">
-              <Field label="Titre *">
-                <input {...inp('title')} required placeholder="Ex : Spirale" style={inputStyle}/>
-              </Field>
-              <Row>
-                <Field label="Année *" hint="ex: 2024">
-                  <input {...inp('year')} type="number" required placeholder="2024" style={inputStyle}/>
-                </Field>
-                <Field label="Catégorie">
-                  <input {...inp('category')} placeholder="Abstrait, Paysage, Floral…" style={inputStyle}/>
-                </Field>
-              </Row>
-              <Field label="Description" hint="Retours à la ligne et espaces conservés">
-                <textarea {...inp('desc')} rows={6} style={{...inputStyle, resize:'vertical', whiteSpace:'pre-wrap', fontFamily:'Inter, sans-serif'}} placeholder={"Décrivez l'œuvre, son inspiration, ses émotions…\n\nVous pouvez utiliser des retours à la ligne."}/>
-              </Field>
-            </Section>
+            {/* Toggle langue */}
+            <div style={{display:'flex', gap:0, marginBottom:24, border:'1px solid rgba(197,110,74,0.25)', width:'fit-content'}}>
+              {[['fr', '🇫🇷 Français'], ['en', '🇬🇧 English']].map(([code, label]) => (
+                <button key={code} type="button" onClick={() => setFormLang(code)} style={{
+                  padding:'8px 20px', fontSize:12, fontWeight:500,
+                  background: formLang === code ? 'var(--gold)' : 'transparent',
+                  color: formLang === code ? '#e9e5da' : 'var(--stone)',
+                  border:'none', cursor:'pointer', fontFamily:'Inter, sans-serif'
+                }}>{label}</button>
+              ))}
+            </div>
 
-            <Section title="Détails techniques">
-              <Row>
-                <Field label="Technique">
-                  <input {...inp('technique')} placeholder="Acrylique sur toile" style={inputStyle}/>
-                </Field>
-                <Field label="Dimensions">
-                  <input {...inp('dimensions')} placeholder="60 × 80 cm" style={inputStyle}/>
-                </Field>
-              </Row>
-              <Row>
-                <Field label="Temps de réalisation" hint="ex: 3 semaines">
-                  <input {...inp('duration')} placeholder="Ex : 2 semaines, 1 mois…" style={inputStyle}/>
-                </Field>
-                <Field label="Prix (€)">
-                  <input {...inp('price')} type="number" placeholder="450" style={inputStyle}/>
-                </Field>
-              </Row>
-              <Field label="Disponibilité">
-                <select value={form.availability} onChange={e => setForm(f => ({...f, availability:e.target.value}))} style={inputStyle}>
-                  <option>Disponible</option>
-                  <option>Vendu</option>
-                </select>
-              </Field>
-            </Section>
+            {formLang === 'fr' ? (
+              <>
+                <Section title="Informations générales">
+                  <Field label="Titre *">
+                    <input {...inp('title')} required placeholder="Ex : Spirale" style={inputStyle}/>
+                  </Field>
+                  <Row>
+                    <Field label="Année *" hint="ex: 2024">
+                      <input {...inp('year')} type="number" required placeholder="2024" style={inputStyle}/>
+                    </Field>
+                    <Field label="Catégorie">
+                      <input {...inp('category')} placeholder="Abstrait, Paysage, Floral…" style={inputStyle}/>
+                    </Field>
+                  </Row>
+                  <Field label="Description" hint="Retours à la ligne et espaces conservés">
+                    <textarea {...inp('desc')} rows={6} style={{...inputStyle, resize:'vertical', whiteSpace:'pre-wrap', fontFamily:'Inter, sans-serif'}} placeholder={"Décrivez l'œuvre, son inspiration, ses émotions…\n\nVous pouvez utiliser des retours à la ligne."}/>
+                  </Field>
+                </Section>
+
+                <Section title="Détails techniques">
+                  <Row>
+                    <Field label="Technique">
+                      <input {...inp('technique')} placeholder="Acrylique sur toile" style={inputStyle}/>
+                    </Field>
+                    <Field label="Dimensions">
+                      <input {...inp('dimensions')} placeholder="60 × 80 cm" style={inputStyle}/>
+                    </Field>
+                  </Row>
+                  <Row>
+                    <Field label="Temps de réalisation" hint="ex: 3 semaines">
+                      <input {...inp('duration')} placeholder="Ex : 2 semaines, 1 mois…" style={inputStyle}/>
+                    </Field>
+                    <Field label="Prix (€)">
+                      <input {...inp('price')} type="number" placeholder="450" style={inputStyle}/>
+                    </Field>
+                  </Row>
+                  <Field label="Disponibilité">
+                    <select value={form.availability} onChange={e => setForm(f => ({...f, availability:e.target.value}))} style={inputStyle}>
+                      <option>Disponible</option>
+                      <option>Vendu</option>
+                    </select>
+                  </Field>
+                </Section>
+              </>
+            ) : (
+              <>
+                <Section title="🇬🇧 General information (English)">
+                  <p style={{fontSize:12, color:'rgba(233,229,218,0.5)', marginBottom:16}}>Leave empty to keep the French version on the English site.</p>
+                  <Field label="Title">
+                    <input {...inp('title_en')} placeholder="Ex: Spiral" style={inputStyle}/>
+                  </Field>
+                  <Field label="Category">
+                    <input {...inp('category_en')} placeholder="Abstract, Landscape, Floral…" style={inputStyle}/>
+                  </Field>
+                  <Field label="Description" hint="Line breaks preserved">
+                    <textarea {...inp('description_en')} rows={6} style={{...inputStyle, resize:'vertical', whiteSpace:'pre-wrap', fontFamily:'Inter, sans-serif'}} placeholder="Describe the artwork, its inspiration, its emotions…"/>
+                  </Field>
+                </Section>
+
+                <Section title="🇬🇧 Technical details (English)">
+                  <Row>
+                    <Field label="Technique">
+                      <input {...inp('technique_en')} placeholder="Acrylic on canvas" style={inputStyle}/>
+                    </Field>
+                    <Field label="Dimensions">
+                      <input {...inp('dimensions_en')} placeholder="60 × 80 cm" style={inputStyle}/>
+                    </Field>
+                  </Row>
+                  <Field label="Time to create">
+                    <input {...inp('duration_en')} placeholder="Ex: 2 weeks, 1 month…" style={inputStyle}/>
+                  </Field>
+                </Section>
+              </>
+            )}
 
             <Section title="Image de l'œuvre">
               <Field label="Photo" hint="JPG, WEBP · max 2 Mo · idéal 1200×1600px">
@@ -473,73 +535,103 @@ export default function AdminPage() {
               </div>
             )}
 
+            {/* Toggle langue */}
+            <div style={{display:'flex', gap:0, marginBottom:24, border:'1px solid rgba(197,110,74,0.25)', width:'fit-content'}}>
+              {[['fr', '🇫🇷 Français'], ['en', '🇬🇧 English']].map(([code, label]) => (
+                <button key={code} type="button" onClick={() => setSettingsLang(code)} style={{
+                  padding:'8px 20px', fontSize:12, fontWeight:500,
+                  background: settingsLang === code ? 'var(--gold)' : 'transparent',
+                  color: settingsLang === code ? '#e9e5da' : 'var(--stone)',
+                  border:'none', cursor:'pointer', fontFamily:'Inter, sans-serif'
+                }}>{label}</button>
+              ))}
+            </div>
+            {settingsLang === 'en' && (
+              <p style={{fontSize:12, color:'rgba(233,229,218,0.5)', marginBottom:20}}>
+                Leave a field empty to automatically use the French version on the English site.
+              </p>
+            )}
+
+            {(() => {
+              // sk() ajoute le suffixe _en si on est en mode anglais
+              const sk = (key) => settingsLang === 'en' ? `${key}_en` : key
+              const sv = (key) => settings[sk(key)] || ''
+              const sset = (key, val) => setSettings(s => ({ ...s, [sk(key)]: val }))
+
+              return (<>
             <Section title="🏠 Page d'accueil — Textes du hero">
               <Field label="Label coloré (au-dessus du titre)">
-                <input value={settings.heroEyebrow} onChange={e=>setSettings(s=>({...s,heroEyebrow:e.target.value}))} style={inputStyle}/>
+                <input value={sv('heroEyebrow')} onChange={e=>sset('heroEyebrow', e.target.value)} style={inputStyle}/>
               </Field>
               <Row>
                 <Field label="Titre — ligne 1">
-                  <input value={settings.heroLine1} onChange={e=>setSettings(s=>({...s,heroLine1:e.target.value}))} style={inputStyle}/>
+                  <input value={sv('heroLine1')} onChange={e=>sset('heroLine1', e.target.value)} style={inputStyle}/>
                 </Field>
                 <Field label="Titre — ligne 2 (italique doré)">
-                  <input value={settings.heroLine2} onChange={e=>setSettings(s=>({...s,heroLine2:e.target.value}))} style={inputStyle}/>
+                  <input value={sv('heroLine2')} onChange={e=>sset('heroLine2', e.target.value)} style={inputStyle}/>
                 </Field>
               </Row>
               <Field label="Accroche / sous-titre">
-                <textarea value={settings.heroDesc} onChange={e=>setSettings(s=>({...s,heroDesc:e.target.value}))} rows={3} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
+                <textarea value={sv('heroDesc')} onChange={e=>sset('heroDesc', e.target.value)} rows={3} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
               </Field>
               <Field label="Texte du bouton">
-                <input value={settings.heroBtn} onChange={e=>setSettings(s=>({...s,heroBtn:e.target.value}))} style={inputStyle}/>
+                <input value={sv('heroBtn')} onChange={e=>sset('heroBtn', e.target.value)} style={inputStyle}/>
               </Field>
             </Section>
 
             <Section title="👩‍🎨 Bloc À propos (home)">
               <Row>
                 <Field label="Titre — ligne 1">
-                  <input value={settings.aboutLine1} onChange={e=>setSettings(s=>({...s,aboutLine1:e.target.value}))} style={inputStyle}/>
+                  <input value={sv('aboutLine1')} onChange={e=>sset('aboutLine1', e.target.value)} style={inputStyle}/>
                 </Field>
                 <Field label="Titre — ligne 2 (italique doré)">
-                  <input value={settings.aboutLine2} onChange={e=>setSettings(s=>({...s,aboutLine2:e.target.value}))} style={inputStyle}/>
+                  <input value={sv('aboutLine2')} onChange={e=>sset('aboutLine2', e.target.value)} style={inputStyle}/>
                 </Field>
               </Row>
               <Field label="Texte de présentation">
-                <textarea value={settings.aboutText} onChange={e=>setSettings(s=>({...s,aboutText:e.target.value}))} rows={4} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
+                <textarea value={sv('aboutText')} onChange={e=>sset('aboutText', e.target.value)} rows={4} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
               </Field>
             </Section>
 
-            <Section title="🖼️ Œuvres récentes (home)">
-              <p style={{fontSize:12, color:'var(--stone)', marginBottom:16}}>Choisissez les 3 œuvres affichées dans la section "Œuvres récentes". Laissez vide pour afficher automatiquement les 3 dernières.</p>
-              {[['recentId1','Œuvre 1'],['recentId2','Œuvre 2'],['recentId3','Œuvre 3']].map(([key, label]) => (
-                <Field key={key} label={label}>
-                  <select value={settings[key]} onChange={e=>setSettings(s=>({...s,[key]:e.target.value}))} style={inputStyle}>
-                    <option value="">— Automatique —</option>
-                    {artworks.map(a => <option key={a.id} value={a.id}>{a.title} ({a.year})</option>)}
-                  </select>
-                </Field>
-              ))}
-            </Section>
+            {settingsLang === 'fr' && (
+              <Section title="🖼️ Œuvres récentes (home)">
+                <p style={{fontSize:12, color:'var(--stone)', marginBottom:16}}>Choisissez les 3 œuvres affichées dans la section "Œuvres récentes". Laissez vide pour afficher automatiquement les 3 dernières.</p>
+                {[['recentId1','Œuvre 1'],['recentId2','Œuvre 2'],['recentId3','Œuvre 3']].map(([key, label]) => (
+                  <Field key={key} label={label}>
+                    <select value={settings[key]} onChange={e=>setSettings(s=>({...s,[key]:e.target.value}))} style={inputStyle}>
+                      <option value="">— Automatique —</option>
+                      {artworks.map(a => <option key={a.id} value={a.id}>{a.title} ({a.year})</option>)}
+                    </select>
+                  </Field>
+                ))}
+              </Section>
+            )}
 
             <Section title="🎨 Section Commande personnalisée (home)">
               <Row>
                 <Field label="Titre ligne 1">
-                  <input value={settings.commandeTitle} onChange={e=>setSettings(s=>({...s,commandeTitle:e.target.value}))} style={inputStyle} placeholder="Une œuvre unique,"/>
+                  <input value={sv('commandeTitle')} onChange={e=>sset('commandeTitle', e.target.value)} style={inputStyle} placeholder="Une œuvre unique,"/>
                 </Field>
                 <Field label="Titre ligne 2 (italique doré)">
-                  <input value={settings.commandeTitleItalic} onChange={e=>setSettings(s=>({...s,commandeTitleItalic:e.target.value}))} style={inputStyle} placeholder="rien que pour vous"/>
+                  <input value={sv('commandeTitleItalic')} onChange={e=>sset('commandeTitleItalic', e.target.value)} style={inputStyle} placeholder="rien que pour vous"/>
                 </Field>
               </Row>
               <Field label="Description">
-                <textarea value={settings.commandeDesc} onChange={e=>setSettings(s=>({...s,commandeDesc:e.target.value}))} rows={3} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
+                <textarea value={sv('commandeDesc')} onChange={e=>sset('commandeDesc', e.target.value)} rows={3} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
               </Field>
               <Field label="Texte du bouton">
-                <input value={settings.commandeBtn} onChange={e=>setSettings(s=>({...s,commandeBtn:e.target.value}))} style={inputStyle} placeholder="Faire une demande"/>
+                <input value={sv('commandeBtn')} onChange={e=>sset('commandeBtn', e.target.value)} style={inputStyle} placeholder="Faire une demande"/>
               </Field>
 
               <Field label="Les 4 blocs caractéristiques">
                 <p style={{fontSize:11, color:'rgba(233,229,218,0.5)', marginBottom:12}}>Modifiez les 4 blocs affichés à droite de la section commande.</p>
                 {(() => {
+                  const featKey = sk('commandeFeatures')
                   let features = []
-                  try { features = JSON.parse(settings.commandeFeatures) } catch { features = [] }
+                  try { features = JSON.parse(settings[featKey] || (settingsLang === 'en' ? '[]' : DEFAULT_SETTINGS.commandeFeatures)) } catch { features = [] }
+                  if (settingsLang === 'en' && features.length === 0) {
+                    try { features = JSON.parse(settings.commandeFeatures).map(f => ({...f})) } catch { features = [] }
+                  }
                   return features.map((f, i) => (
                     <div key={i} style={{display:'grid', gridTemplateColumns:'48px 1fr 1fr', gap:8, marginBottom:10, alignItems:'start'}}>
                       <input
@@ -547,7 +639,7 @@ export default function AdminPage() {
                         onChange={e => {
                           const updated = [...features]
                           updated[i] = { ...f, icon: e.target.value }
-                          setSettings(s => ({...s, commandeFeatures: JSON.stringify(updated)}))
+                          setSettings(s => ({...s, [featKey]: JSON.stringify(updated)}))
                         }}
                         placeholder="🎨"
                         style={{...inputStyle, textAlign:'center', fontSize:20, padding:'8px 4px'}}
@@ -557,7 +649,7 @@ export default function AdminPage() {
                         onChange={e => {
                           const updated = [...features]
                           updated[i] = { ...f, title: e.target.value }
-                          setSettings(s => ({...s, commandeFeatures: JSON.stringify(updated)}))
+                          setSettings(s => ({...s, [featKey]: JSON.stringify(updated)}))
                         }}
                         placeholder="Titre"
                         style={inputStyle}
@@ -567,7 +659,7 @@ export default function AdminPage() {
                         onChange={e => {
                           const updated = [...features]
                           updated[i] = { ...f, desc: e.target.value }
-                          setSettings(s => ({...s, commandeFeatures: JSON.stringify(updated)}))
+                          setSettings(s => ({...s, [featKey]: JSON.stringify(updated)}))
                         }}
                         placeholder="Description"
                         style={inputStyle}
@@ -582,67 +674,71 @@ export default function AdminPage() {
               <p style={{fontSize:12, color:'rgba(233,229,218,0.5)', marginBottom:16}}>Le bandeau affiché en bas de la page galerie.</p>
               <Row>
                 <Field label="Titre (partie normale)">
-                  <input value={settings.bandeauTitle} onChange={e=>setSettings(s=>({...s,bandeauTitle:e.target.value}))} style={inputStyle} placeholder="Vous souhaitez une œuvre"/>
+                  <input value={sv('bandeauTitle')} onChange={e=>sset('bandeauTitle', e.target.value)} style={inputStyle} placeholder="Vous souhaitez une œuvre"/>
                 </Field>
                 <Field label="Titre (partie italique dorée)">
-                  <input value={settings.bandeauItalic} onChange={e=>setSettings(s=>({...s,bandeauItalic:e.target.value}))} style={inputStyle} placeholder="unique & personnalisée ?"/>
+                  <input value={sv('bandeauItalic')} onChange={e=>sset('bandeauItalic', e.target.value)} style={inputStyle} placeholder="unique & personnalisée ?"/>
                 </Field>
               </Row>
               <Field label="Description">
-                <input value={settings.bandeauDesc} onChange={e=>setSettings(s=>({...s,bandeauDesc:e.target.value}))} style={inputStyle} placeholder="Clara crée sur commande…"/>
+                <input value={sv('bandeauDesc')} onChange={e=>sset('bandeauDesc', e.target.value)} style={inputStyle} placeholder="Clara crée sur commande…"/>
               </Field>
               <Field label="Texte du bouton">
-                <input value={settings.bandeauBtn} onChange={e=>setSettings(s=>({...s,bandeauBtn:e.target.value}))} style={inputStyle} placeholder="Faire une demande"/>
+                <input value={sv('bandeauBtn')} onChange={e=>sset('bandeauBtn', e.target.value)} style={inputStyle} placeholder="Faire une demande"/>
               </Field>
             </Section>
 
             <Section title="📄 Page À propos">
               <Row>
                 <Field label="Nom / Titre">
-                  <input value={settings.aboutPageTitle} onChange={e=>setSettings(s=>({...s,aboutPageTitle:e.target.value}))} style={inputStyle} placeholder="Clara"/>
+                  <input value={sv('aboutPageTitle')} onChange={e=>sset('aboutPageTitle', e.target.value)} style={inputStyle} placeholder="Clara"/>
                 </Field>
                 <Field label="Sous-titre">
-                  <input value={settings.aboutPageSubtitle} onChange={e=>setSettings(s=>({...s,aboutPageSubtitle:e.target.value}))} style={inputStyle} placeholder="Infirmière & Artiste"/>
+                  <input value={sv('aboutPageSubtitle')} onChange={e=>sset('aboutPageSubtitle', e.target.value)} style={inputStyle} placeholder="Artiste"/>
                 </Field>
               </Row>
               <Field label="Introduction">
-                <textarea value={settings.aboutPageIntro} onChange={e=>setSettings(s=>({...s,aboutPageIntro:e.target.value}))} rows={4} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
+                <textarea value={sv('aboutPageIntro')} onChange={e=>sset('aboutPageIntro', e.target.value)} rows={4} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
               </Field>
               <Field label="Démarche artistique">
-                <textarea value={settings.aboutPageDemarche} onChange={e=>setSettings(s=>({...s,aboutPageDemarche:e.target.value}))} rows={4} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
+                <textarea value={sv('aboutPageDemarche')} onChange={e=>sset('aboutPageDemarche', e.target.value)} rows={4} style={{...inputStyle,resize:'vertical',whiteSpace:'pre-wrap'}}/>
               </Field>
               <Field label='Citation'>
-                <input value={settings.aboutPageCitation} onChange={e=>setSettings(s=>({...s,aboutPageCitation:e.target.value}))} style={inputStyle}/>
+                <input value={sv('aboutPageCitation')} onChange={e=>sset('aboutPageCitation', e.target.value)} style={inputStyle}/>
               </Field>
-              <Field label="Photo de l'artiste" hint="JPG, WEBP · max 2 Mo">
-                <input type="file" accept="image/*" ref={photoRef} style={{display:'none'}}
-                  onChange={async e => {
-                    const file = e.target.files[0]
-                    if (!file) return
-                    const fd = new FormData()
-                    fd.append('file', file)
-                    const token = sessionStorage.getItem('calar_admin')
-                    const res = await fetch('/api/upload', { method:'POST', headers:{ Authorization:`Bearer ${token}` }, body: fd })
-                    if (res.ok) {
-                      const { url } = await res.json()
-                      setSettings(s => ({...s, aboutPagePhoto: url}))
-                      showToast('✓ Photo uploadée !')
-                    } else {
-                      showToast('Erreur lors de l\'upload.', 'error')
+              {settingsLang === 'fr' && (
+                <Field label="Photo de l'artiste" hint="JPG, WEBP · max 2 Mo">
+                  <input type="file" accept="image/*" ref={photoRef} style={{display:'none'}}
+                    onChange={async e => {
+                      const file = e.target.files[0]
+                      if (!file) return
+                      const fd = new FormData()
+                      fd.append('file', file)
+                      const token = sessionStorage.getItem('calar_admin')
+                      const res = await fetch('/api/upload', { method:'POST', headers:{ Authorization:`Bearer ${token}` }, body: fd })
+                      if (res.ok) {
+                        const { url } = await res.json()
+                        setSettings(s => ({...s, aboutPagePhoto: url}))
+                        showToast('✓ Photo uploadée !')
+                      } else {
+                        showToast('Erreur lors de l\'upload.', 'error')
+                      }
+                    }}
+                  />
+                  <div onClick={() => photoRef.current?.click()} style={{border:'2px dashed rgba(197,110,74,0.25)', padding:24, textAlign:'center', background:'rgba(233,229,218,0.08)', cursor:'pointer'}}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--gold)'}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(197,110,74,0.25)'}
+                  >
+                    {settings.aboutPagePhoto
+                      ? <img src={settings.aboutPagePhoto} alt="Photo" style={{maxHeight:160, objectFit:'contain', margin:'0 auto', display:'block', borderRadius:2}}/>
+                      : <div style={{opacity:0.4}}><div style={{fontSize:32, marginBottom:8}}>📷</div><div style={{fontSize:13, color:'var(--stone)'}}>Cliquez pour uploader une photo</div></div>
                     }
-                  }}
-                />
-                <div onClick={() => photoRef.current?.click()} style={{border:'2px dashed rgba(197,110,74,0.25)', padding:24, textAlign:'center', background:'rgba(233,229,218,0.08)', cursor:'pointer'}}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--gold)'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(197,110,74,0.25)'}
-                >
-                  {settings.aboutPagePhoto
-                    ? <img src={settings.aboutPagePhoto} alt="Photo" style={{maxHeight:160, objectFit:'contain', margin:'0 auto', display:'block', borderRadius:2}}/>
-                    : <div style={{opacity:0.4}}><div style={{fontSize:32, marginBottom:8}}>📷</div><div style={{fontSize:13, color:'var(--stone)'}}>Cliquez pour uploader une photo</div></div>
-                  }
-                </div>
-              </Field>
+                  </div>
+                </Field>
+              )}
             </Section>
+              </>)
+            })()}
 
             <div style={{display:'flex', justifyContent:'flex-end'}}>
               <button type="submit" style={btnPrimary}>Enregistrer toutes les modifications</button>
