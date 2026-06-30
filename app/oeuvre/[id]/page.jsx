@@ -76,18 +76,18 @@ export default function OeuvrePage() {
       />
 
       <div style={{paddingTop:80}}>
-        <button onClick={() => router.push('/galerie')} style={{
+        <button onClick={() => router.push('/galerie')} className="pdp-back" style={{
           margin:'28px 48px 0', fontSize:11, fontWeight:500, letterSpacing:'0.1em',
           textTransform:'uppercase', color:'var(--stone)', background:'none', border:'none',
           cursor:'pointer', display:'flex', alignItems:'center', gap:8
         }}>← Retour à la galerie</button>
 
-        <div style={{
+        <div className="pdp-layout" style={{
           display:'grid', gridTemplateColumns:'1.1fr 1fr', gap:80,
           padding:'48px 48px 80px', alignItems:'start'
         }}>
           {/* Image cliquable */}
-          <div style={{position:'sticky', top:100}}>
+          <div className="pdp-image-wrap" style={{position:'sticky', top:100}}>
             <div
               onClick={() => artwork.image_url && setLightboxOpen(true)}
               style={{
@@ -116,7 +116,7 @@ export default function OeuvrePage() {
             <p style={{fontSize:11, fontWeight:500, letterSpacing:'0.16em', textTransform:'uppercase', color:'var(--blue)', marginBottom:16}}>
               {artwork.category}
             </p>
-            <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:52, fontWeight:300, lineHeight:1.05, marginBottom:8}}>
+            <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(34px, 7vw, 52px)', fontWeight:300, lineHeight:1.05, marginBottom:8}}>
               {artwork.title}
             </h1>
             <p style={{fontSize:14, color:'var(--stone)', marginBottom:32}}>{artwork.year}</p>
@@ -210,13 +210,13 @@ export default function OeuvrePage() {
 
       <style>{`
         @media (max-width: 768px) {
-          div[style*="grid-template-columns: 1.1fr 1fr"] {
+          .pdp-layout {
             grid-template-columns: 1fr !important;
             padding: 20px !important;
-            gap: 32px !important;
+            gap: 28px !important;
           }
-          div[style*="position: sticky"] { position: static !important; }
-          button[style*="margin: 28px 48px"] { margin: 20px 20px 0 !important; }
+          .pdp-image-wrap { position: static !important; }
+          .pdp-back { margin: 20px 20px 0 !important; }
         }
       `}</style>
     </>
