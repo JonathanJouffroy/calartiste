@@ -89,15 +89,15 @@ export default function AProposPage() {
       <div style={{paddingTop:80}}>
 
         {/* HERO */}
-        <section style={{
+        <section className="about-hero" style={{
           display:'grid', gridTemplateColumns:'1fr 1fr',
           minHeight:'70vh', background:'var(--cream)'
         }}>
-          <div style={{display:'flex', flexDirection:'column', justifyContent:'center', padding:'80px 64px 80px 48px'}}>
+          <div className="about-hero-text" style={{display:'flex', flexDirection:'column', justifyContent:'center', padding:'80px 64px 80px 48px'}}>
             <p style={{fontSize:11, fontWeight:500, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--blue)', marginBottom:20}}>
               À propos
             </p>
-            <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(52px, 6vw, 80px)', fontWeight:300, lineHeight:1.08, marginBottom:16, color:'var(--black)'}}>
+            <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(38px, 9vw, 80px)', fontWeight:300, lineHeight:1.08, marginBottom:16, color:'var(--black)'}}>
               {s.aboutPageTitle}
             </h1>
             <p style={{fontSize:16, fontWeight:400, color:'var(--gold)', letterSpacing:'0.06em', marginBottom:32, fontFamily:"'Cormorant Garant', serif", fontStyle:'italic'}}>
@@ -108,7 +108,7 @@ export default function AProposPage() {
             </p>
           </div>
 
-          <div style={{position:'relative', background:'var(--light)', overflow:'hidden', minHeight:400}}>
+          <div className="about-hero-photo" style={{position:'relative', background:'var(--light)', overflow:'hidden', minHeight:400}}>
             {s.aboutPagePhoto ? (
               <Image src={s.aboutPagePhoto} alt={s.aboutPageTitle} fill style={{objectFit:'cover'}} unoptimized/>
             ) : (
@@ -122,7 +122,7 @@ export default function AProposPage() {
 
         {/* CITATION */}
         {s.aboutPageCitation && (
-          <section style={{
+          <section className="about-citation" style={{
             background:'var(--gold)', padding:'60px 48px', textAlign:'center'
           }}>
             <blockquote style={{
@@ -136,12 +136,12 @@ export default function AProposPage() {
         )}
 
         {/* DÉMARCHE */}
-        <section style={{
+        <section className="about-demarche" style={{
           padding:'80px 48px', display:'grid',
           gridTemplateColumns:'1fr 1fr', gap:80, alignItems:'center',
           background:'var(--cream)'
         }}>
-          <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:44, fontWeight:300, lineHeight:1.1, color:'var(--black)'}}>
+          <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(28px, 6vw, 44px)', fontWeight:300, lineHeight:1.1, color:'var(--black)'}}>
             Ma démarche<br/><em style={{fontStyle:'italic', color:'var(--gold)'}}>artistique</em>
           </h2>
           <p style={{fontSize:15, color:'var(--stone)', lineHeight:1.9, whiteSpace:'pre-wrap'}}>
@@ -150,7 +150,7 @@ export default function AProposPage() {
         </section>
 
         {/* FORMULAIRE DE CONTACT */}
-        <section id="contact" style={{
+        <section id="contact" className="about-contact" style={{
           background:'var(--light)', padding:'80px 48px',
           borderTop:'2px solid var(--gold)'
         }}>
@@ -158,7 +158,7 @@ export default function AProposPage() {
             <p style={{fontSize:11, fontWeight:500, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--gold)', marginBottom:16, textAlign:'center'}}>
               Commande personnalisée
             </p>
-            <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:44, fontWeight:300, marginBottom:12, color:'var(--black)', textAlign:'center', lineHeight:1.1}}>
+            <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(28px, 6vw, 44px)', fontWeight:300, marginBottom:12, color:'var(--black)', textAlign:'center', lineHeight:1.1}}>
               Une idée en tête ?<br/><em style={{fontStyle:'italic', color:'var(--gold)'}}>Parlons-en</em>
             </h2>
             <p style={{fontSize:15, color:'var(--stone)', textAlign:'center', lineHeight:1.8, marginBottom:48}}>
@@ -186,7 +186,7 @@ export default function AProposPage() {
                     {error}
                   </div>
                 )}
-                <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
+                <div className="about-form-row" style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
                   <div style={{display:'grid', gap:8}}>
                     <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>Prénom *</label>
                     <input required value={form.firstname} onChange={e => setForm(f => ({...f, firstname:e.target.value}))} placeholder="Marie" style={inputStyle}/>
@@ -224,7 +224,7 @@ export default function AProposPage() {
         </section>
 
         {/* CTA GALERIE */}
-        <section style={{
+        <section className="about-cta" style={{
           background:'var(--cream)', padding:'60px 48px', textAlign:'center',
         }}>
           <h2 style={{fontFamily:"'Cormorant Garant', serif", fontSize:32, fontWeight:300, marginBottom:20, color:'var(--black)'}}>
@@ -244,9 +244,14 @@ export default function AProposPage() {
 
       <style>{`
         @media (max-width: 768px) {
-          section[style*="grid-template-columns: 1fr 1fr"] {
-            grid-template-columns: 1fr !important;
-          }
+          .about-hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+          .about-hero-text { padding: 56px 20px 40px !important; }
+          .about-hero-photo { min-height: 320px !important; }
+          .about-citation { padding: 40px 20px !important; }
+          .about-demarche { grid-template-columns: 1fr !important; gap: 32px !important; padding: 48px 20px !important; }
+          .about-contact { padding: 48px 20px !important; }
+          .about-form-row { grid-template-columns: 1fr !important; }
+          .about-cta { padding: 40px 20px !important; }
         }
       `}</style>
     </>
