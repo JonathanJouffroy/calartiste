@@ -38,13 +38,15 @@ export default function ContactModal({ artwork, onClose }) {
     <div onClick={onClose} style={{
       position:'fixed', inset:0, zIndex:200,
       background:'rgba(7,5,2,0.75)', backdropFilter:'blur(6px)',
-      display:'flex', alignItems:'center', justifyContent:'center'
+      display:'flex', alignItems:'center', justifyContent:'center',
+      padding:16
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div onClick={e => e.stopPropagation()} className="contact-modal-box" style={{
         background:'var(--cream)', padding:'52px 44px',
         width:'100%', maxWidth:460, position:'relative',
         boxShadow:'0 40px 80px rgba(0,0,0,0.25)',
-        border:'1px solid rgba(197,110,74,0.2)'
+        border:'1px solid rgba(197,110,74,0.2)',
+        maxHeight:'90vh', overflowY:'auto'
       }}>
         <button onClick={onClose} style={{
           position:'absolute', top:18, right:20, background:'none',
@@ -66,7 +68,7 @@ export default function ContactModal({ artwork, onClose }) {
             {error && <div style={{fontSize:12, color:'#c44', padding:'10px 14px', background:'rgba(196,49,43,0.08)', border:'1px solid rgba(196,49,43,0.2)', marginBottom:16}}>{error}</div>}
 
             <form onSubmit={send} style={{display:'grid', gap:18}}>
-              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
+              <div className="contact-form-row" style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
                 <div style={{display:'grid', gap:8}}>
                   <label style={{fontSize:11, fontWeight:500, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--stone)'}}>Prénom *</label>
                   <input name="firstname" required placeholder="Marie" style={inputStyle}/>
@@ -95,6 +97,12 @@ export default function ContactModal({ artwork, onClose }) {
           </>
         )}
       </div>
+      <style jsx>{`
+        @media (max-width: 480px) {
+          .contact-modal-box { padding: 40px 24px !important; }
+          .contact-form-row { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   )
 }
