@@ -1,5 +1,6 @@
 import './globals.css'
 import Nav from '@/components/Nav'
+import { LangProvider } from '@/lib/LangContext'
 
 const BASE_URL = 'https://calartiste.vercel.app'
 
@@ -79,8 +80,10 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <Nav />
-        <main>{children}</main>
+        <LangProvider>
+          <Nav />
+          <main>{children}</main>
+        </LangProvider>
       </body>
     </html>
   )
