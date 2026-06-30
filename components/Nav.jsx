@@ -121,6 +121,7 @@ export default function Nav() {
         @media (max-width: 768px) {
           nav ul { display: none !important; }
           .burger-btn { display: flex !important; }
+          nav { padding: 16px 20px !important; }
         }
       `}</style>
     </>
