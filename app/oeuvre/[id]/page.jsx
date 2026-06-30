@@ -5,10 +5,12 @@ import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 import ContactModal from '@/components/ContactModal'
 import Footer from '@/components/Footer'
+import { useLang } from '@/lib/LangContext'
 
 export default function OeuvrePage() {
   const { id } = useParams()
   const router = useRouter()
+  const { lang, t } = useLang()
   const [artwork, setArtwork] = useState(null)
   const [contactOpen, setContactOpen] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -17,13 +19,16 @@ export default function OeuvrePage() {
     supabase.from('artworks').select('*').eq('id', id).single()
       .then(({ data, error }) => {
         if (error || !data) router.push('/galerie')
-        else {
-          setArtwork(data)
-          // Mise à jour dynamique du titre de la page
-          document.title = `${data.title} · Calar.Artiste`
-        }
+        else setArtwork(data)
       })
   }, [id])
+
+  useEffect(() => {
+    if (artwork) {
+      const title = lang === 'en' && artwork.title_en ? artwork.title_en : artwork.title
+      document.title = `${title} · Calar.Artiste`
+    }
+  }, [artwork, lang])
 
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') setLightboxOpen(false) }
@@ -37,22 +42,28 @@ export default function OeuvrePage() {
   }, [lightboxOpen])
 
   if (!artwork) return (
-    <div style={{paddingTop:120, textAlign:'center', color:'var(--stone)'}}>Chargement…</div>
+    <div style={{paddingTop:120, textAlign:'center', color:'var(--stone)'}}>{t('pdp.loading')}</div>
   )
 
   const vendu = artwork.availability === 'Vendu'
+  const title = lang === 'en' && artwork.title_en ? artwork.title_en : artwork.title
+  const category = lang === 'en' && artwork.category_en ? artwork.category_en : artwork.category
+  const description = lang === 'en' && artwork.description_en ? artwork.description_en : artwork.description
+  const technique = lang === 'en' && artwork.technique_en ? artwork.technique_en : artwork.technique
+  const dimensions = lang === 'en' && artwork.dimensions_en ? artwork.dimensions_en : artwork.dimensions
+  const duration = lang === 'en' && artwork.duration_en ? artwork.duration_en : artwork.duration
+  const availability = lang === 'en' ? t(`availability.${artwork.availability}`) : artwork.availability
 
-  // JSON-LD pour l'œuvre
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'VisualArtwork',
-    name: artwork.title,
-    description: artwork.description,
+    name: title,
+    description: description,
     image: artwork.image_url,
     dateCreated: artwork.year,
-    artMedium: artwork.technique,
+    artMedium: technique,
     artworkSurface: 'Toile',
-    width: artwork.dimensions,
+    width: dimensions,
     offers: artwork.price && artwork.availability === 'Disponible' ? {
       '@type': 'Offer',
       price: artwork.price,
@@ -69,7 +80,6 @@ export default function OeuvrePage() {
 
   return (
     <>
-      {/* JSON-LD structuré pour Google */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
@@ -80,13 +90,12 @@ export default function OeuvrePage() {
           margin:'28px 48px 0', fontSize:11, fontWeight:500, letterSpacing:'0.1em',
           textTransform:'uppercase', color:'var(--stone)', background:'none', border:'none',
           cursor:'pointer', display:'flex', alignItems:'center', gap:8
-        }}>← Retour à la galerie</button>
+        }}>{t('pdp.back')}</button>
 
         <div className="pdp-layout" style={{
           display:'grid', gridTemplateColumns:'1.1fr 1fr', gap:80,
           padding:'48px 48px 80px', alignItems:'start'
         }}>
-          {/* Image cliquable */}
           <div className="pdp-image-wrap" style={{position:'sticky', top:100}}>
             <div
               onClick={() => artwork.image_url && setLightboxOpen(true)}
@@ -96,7 +105,7 @@ export default function OeuvrePage() {
               }}
             >
               {artwork.image_url
-                ? <Image src={artwork.image_url} alt={`${artwork.title} — Calar.Artiste`} fill style={{objectFit:'cover'}} sizes="50vw" unoptimized/>
+                ? <Image src={artwork.image_url} alt={`${title} — Calar.Artiste`} fill style={{objectFit:'cover'}} sizes="50vw" unoptimized/>
                 : <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:64,opacity:0.15}}>🖼️</div>
               }
               {artwork.image_url && (
@@ -106,30 +115,29 @@ export default function OeuvrePage() {
                   fontSize:10, fontWeight:500, letterSpacing:'0.1em',
                   textTransform:'uppercase', padding:'6px 10px',
                   backdropFilter:'blur(4px)'
-                }}>🔍 Agrandir</div>
+                }}>{t('pdp.enlarge')}</div>
               )}
             </div>
           </div>
 
-          {/* Info */}
           <div style={{paddingTop:16}}>
             <p style={{fontSize:11, fontWeight:500, letterSpacing:'0.16em', textTransform:'uppercase', color:'var(--blue)', marginBottom:16}}>
-              {artwork.category}
+              {category}
             </p>
             <h1 style={{fontFamily:"'Cormorant Garant', serif", fontSize:'clamp(34px, 7vw, 52px)', fontWeight:300, lineHeight:1.05, marginBottom:8}}>
-              {artwork.title}
+              {title}
             </h1>
             <p style={{fontSize:14, color:'var(--stone)', marginBottom:32}}>{artwork.year}</p>
             <hr style={{border:'none', borderTop:'1px solid rgba(197,110,74,0.2)', margin:'32px 0'}}/>
             <p style={{fontSize:15, lineHeight:1.85, color:'var(--stone)', whiteSpace:'pre-wrap'}}>
-              {artwork.description || 'Pas de description disponible.'}
+              {description || t('pdp.noDescription')}
             </p>
             <div style={{marginTop:40, display:'grid', gap:16}}>
               {[
-                ['Technique', artwork.technique],
-                ['Dimensions', artwork.dimensions],
-                ['Temps de réalisation', artwork.duration],
-                ['Disponibilité', artwork.availability]
+                [t('pdp.technique'), technique],
+                [t('pdp.dimensions'), dimensions],
+                [t('pdp.duration'), duration],
+                [t('pdp.availability'), availability]
               ].map(([label, val]) => val && (
                 <div key={label} style={{display:'flex', justifyContent:'space-between', borderBottom:'1px solid rgba(197,110,74,0.1)', paddingBottom:12}}>
                   <span style={{fontSize:11, textTransform:'uppercase', letterSpacing:'0.1em', color:'var(--stone)'}}>{label}</span>
@@ -139,7 +147,7 @@ export default function OeuvrePage() {
             </div>
             {artwork.price && (
               <p style={{marginTop:40, fontFamily:"'Cormorant Garant', serif", fontSize:36, color:'var(--gold)'}}>
-                {Number(artwork.price).toLocaleString('fr-FR')} €
+                {Number(artwork.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €
               </p>
             )}
             <button
@@ -154,7 +162,7 @@ export default function OeuvrePage() {
                 opacity: vendu ? 0.6 : 1
               }}
             >
-              {vendu ? 'Œuvre vendue' : 'Me contacter'}
+              {vendu ? t('pdp.sold') : t('pdp.contactMe')}
             </button>
           </div>
         </div>
@@ -162,7 +170,6 @@ export default function OeuvrePage() {
 
       <Footer />
 
-      {/* LIGHTBOX */}
       {lightboxOpen && (
         <div
           onClick={() => setLightboxOpen(false)}
@@ -188,17 +195,17 @@ export default function OeuvrePage() {
           >
             <img
               src={artwork.image_url}
-              alt={artwork.title}
+              alt={title}
               style={{maxWidth:'90vw', maxHeight:'75vh', objectFit:'contain', display:'block', boxShadow:'0 40px 80px rgba(0,0,0,0.5)'}}
             />
             <div style={{marginTop:20, textAlign:'center'}}>
               <p style={{fontFamily:"'Cormorant Garant', serif", fontSize:20, fontWeight:300, color:'rgba(255,255,255,0.9)', letterSpacing:'0.04em'}}>
-                {artwork.title}
+                {title}
                 {artwork.year && <span style={{color:'var(--gold)', marginLeft:12}}>· {artwork.year}</span>}
               </p>
-              {artwork.technique && (
+              {technique && (
                 <p style={{fontSize:11, color:'rgba(255,255,255,0.45)', letterSpacing:'0.1em', textTransform:'uppercase', marginTop:6}}>
-                  {artwork.technique}{artwork.dimensions && ` · ${artwork.dimensions}`}
+                  {technique}{dimensions && ` · ${dimensions}`}
                 </p>
               )}
             </div>
@@ -206,7 +213,7 @@ export default function OeuvrePage() {
         </div>
       )}
 
-      {contactOpen && <ContactModal artwork={artwork} onClose={() => setContactOpen(false)} />}
+      {contactOpen && <ContactModal artwork={{...artwork, title}} onClose={() => setContactOpen(false)} />}
 
       <style>{`
         @media (max-width: 768px) {
